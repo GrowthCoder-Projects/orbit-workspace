@@ -1,0 +1,315 @@
+@import 'tailwindcss';
+
+@import 'tw-animate-css';
+
+@source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
+@source '../../storage/framework/views/*.php';
+
+@custom-variant dark (&:is(.dark *));
+
+@theme inline {
+    --font-sans:
+        Instrument Sans, ui-sans-serif, system-ui, sans-serif,
+        'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol',
+        'Noto Color Emoji';
+
+    --radius-lg: var(--radius);
+    --radius-md: calc(var(--radius) - 2px);
+    --radius-sm: calc(var(--radius) - 4px);
+
+    --color-background: var(--background);
+    --color-foreground: var(--foreground);
+
+    --color-card: var(--card);
+    --color-card-foreground: var(--card-foreground);
+
+    --color-popover: var(--popover);
+    --color-popover-foreground: var(--popover-foreground);
+
+    --color-primary: var(--primary);
+    --color-primary-foreground: var(--primary-foreground);
+
+    --color-secondary: var(--secondary);
+    --color-secondary-foreground: var(--secondary-foreground);
+
+    --color-muted: var(--muted);
+    --color-muted-foreground: var(--muted-foreground);
+
+    --color-accent: var(--accent);
+    --color-accent-foreground: var(--accent-foreground);
+
+    --color-destructive: var(--destructive);
+    --color-destructive-foreground: var(--destructive-foreground);
+
+    --color-border: var(--border);
+    --color-input: var(--input);
+    --color-ring: var(--ring);
+
+    --color-chart-1: var(--chart-1);
+    --color-chart-2: var(--chart-2);
+    --color-chart-3: var(--chart-3);
+    --color-chart-4: var(--chart-4);
+    --color-chart-5: var(--chart-5);
+
+    --color-sidebar: var(--sidebar-background);
+    --color-sidebar-foreground: var(--sidebar-foreground);
+    --color-sidebar-primary: var(--sidebar-primary);
+    --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+    --color-sidebar-accent: var(--sidebar-accent);
+    --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+    --color-sidebar-border: var(--sidebar-border);
+    --color-sidebar-ring: var(--sidebar-ring);
+
+    /* Brand Custom Colors */
+    --color-brand-primary: var(--brand-primary);
+    --color-brand-primary-hover: var(--brand-primary-hover);
+    --color-brand-accent: var(--brand-accent);
+    --color-brand-accent-hover: var(--brand-accent-hover);
+    --color-brand-secondary: var(--brand-secondary);
+    --color-brand-secondary-light: var(--brand-secondary-light);
+}
+
+/*
+  The default border color has changed to `currentColor` in Tailwind CSS v4,
+  so we've added these compatibility styles to make sure everything still
+  looks the same as it did with Tailwind CSS v3.
+
+  If we ever want to remove these styles, we need to add an explicit border
+  color utility to any element that depends on these defaults.
+*/
+@layer base {
+    *,
+    ::after,
+    ::before,
+    ::backdrop,
+    ::file-selector-button {
+        border-color: var(--color-gray-200, currentColor);
+    }
+}
+
+@layer utilities {
+    body,
+    html {
+        --font-sans:
+            'Instrument Sans', ui-sans-serif, system-ui, sans-serif,
+            'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol',
+            'Noto Color Emoji';
+    }
+
+    /* Hero Gradient */
+    .hero-gradient {
+        background: radial-gradient(
+            circle at 50% -20%,
+            rgba(92, 89, 217, 0.15) 0%,
+            rgba(43, 182, 115, 0.05) 50%,
+            transparent 100%
+        );
+    }
+
+    /* Text Gradient */
+    .text-brand-gradient {
+        background: linear-gradient(
+            135deg,
+            var(--brand-primary) 0%,
+            var(--brand-secondary) 100%
+        );
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+    }
+
+    .dark .text-brand-gradient {
+        background: linear-gradient(
+            135deg,
+            var(--brand-secondary) 0%,
+            var(--brand-accent) 100%
+        );
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+    }
+
+    /* Glassmorphism Card */
+    .glass-panel {
+        background-color: rgba(255, 255, 255, 0.7);
+        backdrop-filter: blur(12px);
+        border: 1px solid rgba(229, 231, 235, 0.5);
+    }
+
+    .dark .glass-panel {
+        background-color: rgba(20, 20, 25, 0.8);
+        backdrop-filter: blur(12px);
+        border: 1px solid rgba(63, 63, 70, 0.4);
+    }
+
+    /* Auth background pattern (Dot Grid + Radial Glow) - No Glassmorphism */
+    .auth-bg-pattern {
+        background-color: hsl(241 30% 98%);
+        background-image:
+            radial-gradient(
+                circle at 0% 0%,
+                rgba(43, 182, 115, 0.1) 0%,
+                transparent 45%
+            ),
+            radial-gradient(
+                circle at 100% 100%,
+                rgba(92, 89, 217, 0.1) 0%,
+                transparent 45%
+            ),
+            radial-gradient(
+                circle at 50% 50%,
+                rgba(92, 89, 217, 0.15) 0%,
+                rgba(43, 182, 115, 0.05) 60%,
+                transparent 80%
+            ),
+            radial-gradient(rgba(107, 114, 128, 0.12) 1.5px, transparent 1.5px);
+        background-size:
+            cover,
+            cover,
+            cover,
+            24px 24px;
+    }
+
+    .dark .auth-bg-pattern {
+        background-color: var(--background);
+        background-image:
+            radial-gradient(
+                circle at 0% 0%,
+                rgba(43, 182, 115, 0.05) 0%,
+                transparent 45%
+            ),
+            radial-gradient(
+                circle at 100% 100%,
+                rgba(92, 89, 217, 0.05) 0%,
+                transparent 45%
+            ),
+            radial-gradient(
+                circle at 50% 50%,
+                rgba(92, 89, 217, 0.15) 0%,
+                rgba(43, 182, 115, 0.04) 60%,
+                transparent 85%
+            ),
+            radial-gradient(rgba(255, 255, 255, 0.04) 1.5px, transparent 1.5px);
+        background-size:
+            cover,
+            cover,
+            cover,
+            24px 24px;
+    }
+}
+
+:root {
+    /* Latar Belakang & Teks */
+    --background: hsl(0 0% 100%);
+    --foreground: hsl(221 39% 11%); /* Dark Neutral #111827 */
+
+    /* Kartu & Popover */
+    --card: hsl(0 0% 100%);
+    --card-foreground: hsl(221 39% 11%);
+    --popover: hsl(0 0% 100%);
+    --popover-foreground: hsl(221 39% 11%);
+
+    /* Warna Aksi (Buttons & States) */
+    --primary: hsl(243 45% 30%); /* Brand Primary #2D2A6F */
+    --primary-foreground: hsl(0 0% 100%);
+    --secondary: hsl(241 100% 95%); /* Brand Secondary Light #E8E7FF */
+    --secondary-foreground: hsl(243 45% 30%);
+    --accent: hsl(151 62% 44%); /* Brand Accent #2BB673 */
+    --accent-foreground: hsl(0 0% 100%);
+    --destructive: hsl(0 84.2% 60.2%);
+    --destructive-foreground: hsl(0 0% 98%);
+
+    /* Border & Focus Rings */
+    --border: hsl(220 13% 91%); /* Border #E5E7EB */
+    --input: hsl(220 13% 91%);
+    --ring: hsl(243 45% 30%);
+    --muted: hsl(220 14.3% 95.9%); /* Muted Light background */
+    --muted-foreground: hsl(220 8.9% 46.1%); /* Muted Text color */
+
+    /* Chart Colors */
+    --chart-1: hsl(243 45% 30%);
+    --chart-2: hsl(151 62% 44%);
+    --chart-3: hsl(241 62% 60%);
+    --chart-4: hsl(43 74% 66%);
+    --chart-5: hsl(27 87% 67%);
+    --radius: 0.5rem;
+
+    /* Sidebar settings */
+    --sidebar-background: hsl(240 5.3% 98%);
+    --sidebar-foreground: hsl(240 5.3% 26.1%);
+    --sidebar-primary: hsl(243 45% 30%);
+    --sidebar-primary-foreground: hsl(0 0% 100%);
+    --sidebar-accent: hsl(241 100% 95%);
+    --sidebar-accent-foreground: hsl(243 45% 30%);
+    --sidebar-border: hsl(220 13% 91%);
+    --sidebar-ring: hsl(243 45% 30%);
+    --sidebar: hsl(240 5.3% 98%);
+
+    /* Brand Raw */
+    --brand-primary: #2d2a6f;
+    --brand-primary-hover: #3f3a94;
+    --brand-accent: #2bb673;
+    --brand-accent-hover: #24a566;
+    --brand-secondary: #5c59d9;
+    --brand-secondary-light: #e8e7ff;
+}
+
+.dark {
+    /* Latar Belakang & Teks */
+    --background: hsl(240 10% 3.9%);
+    --foreground: hsl(0 0% 98%);
+
+    /* Kartu & Popover */
+    --card: hsl(240 10% 4.9%);
+    --card-foreground: hsl(0 0% 98%);
+    --popover: hsl(240 10% 4.9%);
+    --popover-foreground: hsl(0 0% 98%);
+
+    /* Warna Aksi (Aksesibilitas Ditingkatkan) */
+    --primary: hsl(
+        241 62% 60%
+    ); /* Secondary #5C59D9 untuk kontras yang lebih baik */
+    --primary-foreground: hsl(0 0% 100%);
+    --secondary: hsl(240 5% 15%);
+    --secondary-foreground: hsl(0 0% 98%);
+    --accent: hsl(151 62% 44%); /* Tetap Brand Accent #2BB673 */
+    --accent-foreground: hsl(0 0% 100%);
+
+    /* Border & Focus Rings */
+    --border: hsl(240 5% 15%);
+    --input: hsl(240 5% 15%);
+    --ring: hsl(241 62% 60%);
+    --muted: hsl(240 3.7% 15.9%);
+    --muted-foreground: hsl(240 5% 64.9%);
+
+    /* Chart Colors Dark */
+    --chart-1: hsl(241 62% 60%);
+    --chart-2: hsl(151 62% 44%);
+    --chart-3: hsl(243 45% 30%);
+    --chart-4: hsl(280 65% 60%);
+    --chart-5: hsl(340 75% 55%);
+
+    /* Sidebar Dark settings */
+    --sidebar-background: hsl(240 10% 3.9%);
+    --sidebar-foreground: hsl(0 0% 95.9%);
+    --sidebar-primary: hsl(241 62% 60%);
+    --sidebar-primary-foreground: hsl(0 0% 100%);
+    --sidebar-accent: hsl(240 5% 15%);
+    --sidebar-accent-foreground: hsl(0 0% 95.9%);
+    --sidebar-border: hsl(240 5% 15%);
+    --sidebar-ring: hsl(241 62% 60%);
+    --sidebar: hsl(240 10% 3.9%);
+}
+
+@layer base {
+    * {
+        @apply border-border outline-ring/50;
+    }
+    body {
+        @apply bg-background text-foreground;
+    }
+    button,
+    [type='button'],
+    [type='reset'],
+    [type='submit'] {
+        cursor: pointer;
+    }
+}
