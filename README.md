@@ -169,8 +169,8 @@ Ensure your environment meets the following requirements:
 
 1. **Clone the Repository**
    ```bash
-   git clone https://github.com/your-username/orbit.git
-   cd orbit
+   git clone https://github.com/GrowthCoder-Projects/orbit-workspace.git
+   cd orbit-workspace
    ```
 
 2. **Install PHP Dependencies**
