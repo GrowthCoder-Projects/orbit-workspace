@@ -1,6 +1,8 @@
 <div align="center">
 
-# 🪐 Orbit
+<img src="storage/app/public/logo/orbit-light.png" alt="Orbit Logo" width="180" />
+
+# Orbit
 
 ### **Open by Nature. Organized by Design.**
 
@@ -25,6 +27,7 @@ An open-source, self-hostable, all-in-one personal & professional workspace mana
   <a href="#-testing--code-quality"><b>Testing & Quality</b></a> &nbsp;•&nbsp;
   <a href="#-directory-structure"><b>Architecture</b></a> &nbsp;•&nbsp;
   <a href="docs/api.md"><b>REST API Docs</b></a> &nbsp;•&nbsp;
+  <a href="CHANGELOG.md"><b>Changelog</b></a> &nbsp;•&nbsp;
   <a href="#-contributing"><b>Contributing</b></a>
 </p>
 
