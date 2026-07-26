@@ -5,6 +5,7 @@ namespace App\Observers;
 use App\Models\FinanceAccount;
 use App\Models\FinanceBudget;
 use App\Models\FinanceTransaction;
+use App\Notifications\ActivityNotification;
 use App\Services\ActivityLogService;
 use Carbon\Carbon;
 
@@ -130,7 +131,7 @@ class FinanceTransactionObserver
             // Send Telegram notification for budget alert
             $user = auth()->user();
             if ($user) {
-                $user->notify(new \App\Notifications\ActivityNotification(
+                $user->notify(new ActivityNotification(
                     title: '⚠️ Budget Terlampaui',
                     body: "Budget \"{$categoryName}\" bulan ini telah terlampaui: Rp ".number_format((float) $totalSpent, 0, ',', '.').' / Rp '.number_format((float) $budget->amount, 0, ',', '.'),
                 ));

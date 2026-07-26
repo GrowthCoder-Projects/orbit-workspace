@@ -11,8 +11,8 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class Document extends Model
 {
-    use HasFactory;
     use BelongsToUser;
+    use HasFactory;
 
     /**
      * The attributes that are mass assignable.

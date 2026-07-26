@@ -16,6 +16,7 @@ import {
     Files,
     Activity,
     CheckSquare,
+    Code2,
 } from '@lucide/vue';
 import AppLogo from '@/components/AppLogo.vue';
 import NavMain from '@/components/NavMain.vue';
@@ -173,6 +174,11 @@ const resourceNavItems: NavItem[] = [
         title: 'Bookmarks',
         href: bookmarksIndex(),
         icon: Bookmark,
+    },
+    {
+        title: 'API Docs',
+        href: '/app/docs',
+        icon: Code2,
     },
 ];
 

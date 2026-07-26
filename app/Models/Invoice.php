@@ -10,7 +10,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Invoice extends Model
 {
-    use HasFactory, BelongsToUser;
+    use BelongsToUser, HasFactory;
 
     /**
      * The attributes that are mass assignable.
@@ -117,14 +117,14 @@ class Invoice extends Model
         do {
             $formattedNum = sprintf('%04d', $nextNum);
             $invoiceNumber = strtoupper($prefix);
-            
-            if (!empty($brand)) {
-                $invoiceNumber .= '-' . strtoupper($brand);
+
+            if (! empty($brand)) {
+                $invoiceNumber .= '-'.strtoupper($brand);
             }
-            
-            $invoiceNumber .= '-' . $year . '-' . $formattedNum;
+
+            $invoiceNumber .= '-'.$year.'-'.$formattedNum;
             $nextNum++;
-            
+
             $exists = static::where('invoice_number', $invoiceNumber)->exists();
         } while ($exists);
 
@@ -137,7 +137,7 @@ class Invoice extends Model
     public function recalculateTotals(): void
     {
         $this->loadMissing('items');
-        
+
         $subtotal = 0.00;
         foreach ($this->items as $item) {
             $subtotal += $item->total;

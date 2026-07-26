@@ -21,6 +21,10 @@ import {
     CalendarOff,
     CheckCheck,
     AlertCircle,
+    Play,
+    Square,
+    Pause,
+    Timer,
 } from '@lucide/vue';
 import {
     Chart as ChartJS,
@@ -434,6 +438,69 @@ const submitInvoiceForm = () => {
     });
 };
 
+// Focus Timer Logic
+const activeTimerTaskId = ref<number | null>(null);
+const timerSeconds = ref<number>(0);
+const timerStartedAt = ref<string | null>(null);
+let timerInterval: any = null;
+
+const startFocusTimer = (taskId: number) => {
+    if (activeTimerTaskId.value === taskId) return;
+    if (activeTimerTaskId.value !== null) {
+        stopFocusTimer();
+    }
+    activeTimerTaskId.value = taskId;
+    timerSeconds.value = 0;
+    timerStartedAt.value = new Date().toISOString();
+    timerInterval = setInterval(() => {
+        timerSeconds.value++;
+    }, 1000);
+    toast.info('Timer Fokus Dimulai! Selamat bekerja 🔥');
+};
+
+const stopFocusTimer = () => {
+    if (!activeTimerTaskId.value || !timerStartedAt.value) return;
+    const taskId = activeTimerTaskId.value;
+    const duration = timerSeconds.value;
+    const startedAt = timerStartedAt.value;
+    const endedAt = new Date().toISOString();
+
+    clearInterval(timerInterval);
+    timerInterval = null;
+    activeTimerTaskId.value = null;
+    timerSeconds.value = 0;
+
+    if (duration < 5) {
+        toast.info('Durasi timer terlalu singkat (< 5 detik). Waktu tidak disimpan.');
+        return;
+    }
+
+    router.post(
+        `/app/tasks/${taskId}/time-logs`,
+        {
+            started_at: startedAt,
+            ended_at: endedAt,
+            duration_seconds: duration,
+        },
+        {
+            preserveScroll: true,
+            onSuccess: () => {
+                toast.success(`Waktu fokus (${formatSeconds(duration)}) berhasil dicatat!`);
+            },
+        }
+    );
+};
+
+const formatSeconds = (sec: number) => {
+    const hrs = Math.floor(sec / 3600);
+    const mins = Math.floor((sec % 3600) / 60);
+    const secs = sec % 60;
+    if (hrs > 0) {
+        return `${hrs}:${mins < 10 ? '0' : ''}${mins}:${secs < 10 ? '0' : ''}${secs}`;
+    }
+    return `${mins < 10 ? '0' : ''}${mins}:${secs < 10 ? '0' : ''}${secs}`;
+};
+
 // Weekly overview mixed chart configurations
 const weeklyChartData = computed(() => {
     return {
@@ -777,7 +844,25 @@ const noteColors = [
                                 <Badge v-if="task.due_date" variant="outline" class="text-[8px] px-1 py-0 h-4 text-zinc-400">
                                     {{ new Date(task.due_date).toLocaleDateString('id-ID', { day: 'numeric', month: 'short' }) }}
                                 </Badge>
+                                <span v-if="activeTimerTaskId === task.id" class="inline-flex items-center gap-1 text-[9px] font-mono font-bold text-emerald-600 dark:text-emerald-400 animate-pulse bg-emerald-500/10 px-1.5 py-0.5 rounded">
+                                    <Timer class="h-3 w-3" />
+                                    {{ formatSeconds(timerSeconds) }}
+                                </span>
                             </div>
+                        </div>
+                        <div class="shrink-0">
+                            <button v-if="activeTimerTaskId === task.id"
+                                    @click.stop="stopFocusTimer"
+                                    title="Hentikan & Simpan Waktu Fokus"
+                                    class="h-6 w-6 rounded-full bg-rose-500 text-white flex items-center justify-center hover:bg-rose-600 transition-colors shadow-sm">
+                                <Square class="h-3 w-3 fill-current" />
+                            </button>
+                            <button v-else
+                                    @click.stop="startFocusTimer(task.id)"
+                                    title="Mulai Waktu Fokus"
+                                    class="h-6 w-6 rounded-full bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 flex items-center justify-center hover:bg-emerald-500 hover:text-white transition-colors">
+                                <Play class="h-3 w-3 fill-current ml-0.5" />
+                            </button>
                         </div>
                     </div>
                 </CardContent>

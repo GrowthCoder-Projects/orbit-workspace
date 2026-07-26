@@ -1,3 +1,15 @@
+@php
+    $getStorageFilePath = function(?string $path) {
+        if (! $path) return null;
+        if (file_exists(storage_path('app/public/' . $path))) return storage_path('app/public/' . $path);
+        if (file_exists(storage_path('app/private/' . $path))) return storage_path('app/private/' . $path);
+        if (file_exists(public_path('storage/' . $path))) return public_path('storage/' . $path);
+        return null;
+    };
+    $appLogoSetting = \App\Models\Setting::getValue('app_logo', 'logo/logo-orbit.png');
+    $logoFilePath = $getStorageFilePath($invoice->logo_path) ?? $getStorageFilePath($appLogoSetting);
+    $accountLogoFilePath = $invoice->financeAccount ? $getStorageFilePath($invoice->financeAccount->logo_path) : null;
+@endphp
 <!DOCTYPE html>
 <html>
 <head>
@@ -244,9 +256,9 @@
                 <div style="margin-bottom: 15px;">
                     <div style="font-weight: bold; color: #374151; margin-bottom: 5px;">Metode Pembayaran / Rincian Rekening:</div>
                     <div style="padding: 8px; background-color: #f9fafb; border: 1px solid #e5e7eb; border-radius: 4px; display: table; width: 320px;">
-                        @if ($invoice->financeAccount->logo_path && file_exists(public_path('storage/' . $invoice->financeAccount->logo_path)))
+                        @if ($accountLogoFilePath)
                             <div style="display: table-cell; vertical-align: top; width: 50px; padding-right: 10px;">
-                                <img src="{{ public_path('storage/' . $invoice->financeAccount->logo_path) }}" style="max-width: 40px; max-height: 40px; width: auto; height: auto; border-radius: 3px; border: 1px solid #e5e7eb; background-color: #ffffff;" />
+                                <img src="{{ $accountLogoFilePath }}" style="max-width: 40px; max-height: 40px; width: auto; height: auto; border-radius: 3px; border: 1px solid #e5e7eb; background-color: #ffffff;" />
                             </div>
                         @endif
                         <div style="display: table-cell; vertical-align: top;">

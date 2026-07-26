@@ -7,7 +7,6 @@ use App\Models\FinanceAccount;
 use App\Models\FinanceCategory;
 use App\Models\FinanceTransaction;
 use App\Models\Invoice;
-use App\Models\InvoiceItem;
 use App\Models\Project;
 use App\Models\Setting;
 use Illuminate\Http\RedirectResponse;
@@ -29,7 +28,7 @@ class InvoiceController extends Controller
 
         // Filters
         if ($request->filled('search')) {
-            $query->where('invoice_number', 'like', '%' . $request->input('search') . '%');
+            $query->where('invoice_number', 'like', '%'.$request->input('search').'%');
         }
 
         if ($request->filled('status')) {
@@ -139,7 +138,7 @@ class InvoiceController extends Controller
                 'invoice_prefix' => 'INV',
                 'next_number' => 1,
             ]);
-            
+
             // Extract the number part from the invoice number if it matches pattern
             if (preg_match('/-(\d+)$/', $validated['invoice_number'], $matches)) {
                 $num = intval($matches[1]);
@@ -193,7 +192,7 @@ class InvoiceController extends Controller
         $validated = $request->validate([
             'client_id' => 'required|exists:clients,id',
             'project_id' => 'nullable|exists:projects,id',
-            'invoice_number' => 'required|string|unique:invoices,invoice_number,' . $invoice->id,
+            'invoice_number' => 'required|string|unique:invoices,invoice_number,'.$invoice->id,
             'brand_prefix' => 'nullable|string',
             'brand_name' => 'nullable|string|max:255',
             'status' => 'required|string|in:draft,sent,overdue,paid',
@@ -286,7 +285,7 @@ class InvoiceController extends Controller
                 'type' => 'income',
                 'amount' => $invoice->total,
                 'transaction_date' => now()->toDateString(),
-                'description' => 'Pembayaran Invoice: ' . $invoice->invoice_number,
+                'description' => 'Pembayaran Invoice: '.$invoice->invoice_number,
                 'tags' => ['invoice', 'pembayaran-otomatis'],
             ]);
         });

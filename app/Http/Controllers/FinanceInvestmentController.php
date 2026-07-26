@@ -23,7 +23,7 @@ class FinanceInvestmentController extends Controller
             $buyValue = $inv->average_buy_price * $inv->shares_quantity;
             $currentValue = $inv->current_price * $inv->shares_quantity;
             $profitLoss = $currentValue - $buyValue;
-            
+
             $roi = 0.00;
             if ($buyValue > 0) {
                 $roi = ($profitLoss / $buyValue) * 100;
@@ -48,7 +48,7 @@ class FinanceInvestmentController extends Controller
 
         // Exchange rates (simple estimation USD -> IDR)
         $rate = 16000.0;
-        
+
         $totalPortfolioIDR = 0;
         $totalProfitLossIDR = 0;
 

@@ -39,6 +39,7 @@ class FinanceBudgetController extends Controller
 
         $budgetData = $categories->map(function ($cat) use ($budgets, $spendings) {
             $budget = $budgets->get($cat->id);
+
             return [
                 'category_id' => $cat->id,
                 'category_name' => $cat->name,

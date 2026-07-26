@@ -9,8 +9,8 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Habit extends Model
 {
-    use HasFactory;
     use BelongsToUser;
+    use HasFactory;
 
     /**
      * The attributes that are mass assignable.

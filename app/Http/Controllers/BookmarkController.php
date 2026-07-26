@@ -51,7 +51,7 @@ class BookmarkController extends Controller
             'title' => $host,
         ]);
 
-        if (!empty($validated['tags'])) {
+        if (! empty($validated['tags'])) {
             $tagIds = [];
             foreach ($validated['tags'] as $tagName) {
                 if (trim($tagName) === '') {
@@ -135,7 +135,7 @@ class BookmarkController extends Controller
     public function toggleFavorite(Bookmark $bookmark): RedirectResponse
     {
         $bookmark->update([
-            'is_favorite' => !$bookmark->is_favorite,
+            'is_favorite' => ! $bookmark->is_favorite,
         ]);
 
         return back()->with('success', $bookmark->is_favorite ? 'Bookmark added to favorites.' : 'Bookmark removed from favorites.');

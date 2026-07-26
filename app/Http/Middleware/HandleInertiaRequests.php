@@ -2,6 +2,7 @@
 
 namespace App\Http\Middleware;
 
+use App\Models\Setting;
 use Illuminate\Http\Request;
 use Inertia\Middleware;
 
@@ -43,6 +44,12 @@ class HandleInertiaRequests extends Middleware
             }
         }
 
+        $logoPath = Setting::getValue('app_logo');
+        $iconPath = Setting::getValue('app_icon');
+        $hasCustomLogo = ! empty($logoPath) && $logoPath !== 'logo/logo-orbit.png';
+        $appLogoUrl = $logoPath ? asset('storage/'.$logoPath) : asset('storage/logo/logo-orbit.png');
+        $appIconUrl = $iconPath ? asset('storage/'.$iconPath) : asset('storage/logo/icon-workspace.png');
+
         return [
             ...parent::share($request),
             'name' => config('app.name'),
@@ -51,9 +58,12 @@ class HandleInertiaRequests extends Middleware
                 'showDailyWelcome' => $showDailyWelcome,
             ],
             'settings' => [
-                'notes_editor' => $request->user() ? \App\Models\Setting::getValue('notes_editor', 'tiptap') : 'tiptap',
+                'app_logo' => $appLogoUrl,
+                'app_icon' => $appIconUrl,
+                'is_custom_logo' => $hasCustomLogo,
+                'notes_editor' => $request->user() ? Setting::getValue('notes_editor', 'tiptap') : 'tiptap',
                 'enabled_modules' => $request->user()
-                    ? \App\Models\Setting::getValue('enabled_modules', [
+                    ? Setting::getValue('enabled_modules', [
                         'projects' => true,
                         'tasks' => true,
                         'clients' => true,
@@ -70,6 +80,6 @@ class HandleInertiaRequests extends Middleware
             ],
             'sidebarOpen' => ! $request->hasCookie('sidebar_state') || $request->cookie('sidebar_state') === 'true',
         ];
+
     }
 }
-

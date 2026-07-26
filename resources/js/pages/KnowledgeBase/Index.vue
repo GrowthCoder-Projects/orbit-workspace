@@ -220,7 +220,7 @@ const selectArticle = (id: number) => {
 
     // Maintain state in URL
     router.replace({
-        url: `/kb?id=${id}`,
+        url: `/app/kb?id=${id}`,
         preserveState: true,
         preserveScroll: true,
     });

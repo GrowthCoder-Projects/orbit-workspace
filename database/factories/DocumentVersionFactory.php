@@ -21,7 +21,7 @@ class DocumentVersionFactory extends Factory
         return [
             'document_id' => Document::factory(),
             'version' => 1,
-            'file_path' => 'documents/test-file-' . $this->faker->uuid() . '.txt',
+            'file_path' => 'documents/test-file-'.$this->faker->uuid().'.txt',
             'file_name' => 'test-file.txt',
             'file_size' => 1024,
             'mime_type' => 'text/plain',

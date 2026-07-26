@@ -28,7 +28,7 @@ class LogAuthActivity
     {
         ActivityLogService::log(
             action: 'logout',
-            description: "Logout dari sesi aktif",
+            description: 'Logout dari sesi aktif',
             subject: null,
         );
     }

@@ -1,3 +1,14 @@
+@php
+    $getStorageFilePath = function(?string $path) {
+        if (! $path) return null;
+        if (file_exists(storage_path('app/public/' . $path))) return storage_path('app/public/' . $path);
+        if (file_exists(storage_path('app/private/' . $path))) return storage_path('app/private/' . $path);
+        if (file_exists(public_path('storage/' . $path))) return public_path('storage/' . $path);
+        return null;
+    $appLogoSetting = \App\Models\Setting::getValue('app_logo', 'logo/logo-orbit.png');
+    $logoFilePath = $getStorageFilePath($invoice->logo_path) ?? $getStorageFilePath($appLogoSetting);
+    $accountLogoFilePath = $invoice->financeAccount ? $getStorageFilePath($invoice->financeAccount->logo_path) : null;
+@endphp
 <!DOCTYPE html>
 <html>
 <head>
@@ -214,9 +225,9 @@
                 <div style="margin-bottom: 15px;">
                     <div style="font-weight: bold; margin-bottom: 3px;">Metode Pembayaran:</div>
                     <div style="padding: 6px; border: 1px solid #e5e5e5; display: table; width: 320px; border-radius: 2px;">
-                        @if ($invoice->financeAccount->logo_path && file_exists(public_path('storage/' . $invoice->financeAccount->logo_path)))
+                        @if ($accountLogoFilePath)
                             <div style="display: table-cell; vertical-align: top; width: 50px; padding-right: 10px;">
-                                <img src="{{ public_path('storage/' . $invoice->financeAccount->logo_path) }}" style="max-width: 40px; max-height: 40px; width: auto; height: auto; border-radius: 2px; border: 1px solid #e5e5e5; background-color: #ffffff;" />
+                                <img src="{{ $accountLogoFilePath }}" style="max-width: 40px; max-height: 40px; width: auto; height: auto; border-radius: 2px; border: 1px solid #e5e5e5; background-color: #ffffff;" />
                             </div>
                         @endif
                         <div style="display: table-cell; vertical-align: top;">

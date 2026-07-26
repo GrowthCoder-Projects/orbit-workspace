@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Concerns\BelongsToUser;
+use Database\Factories\KbArticleFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -12,9 +13,10 @@ use Illuminate\Support\Str;
 
 class KbArticle extends Model
 {
-    /** @use HasFactory<\Database\Factories\KbArticleFactory> */
-    use HasFactory;
     use BelongsToUser;
+
+    /** @use HasFactory<KbArticleFactory> */
+    use HasFactory;
 
     /**
      * The attributes that are mass assignable.

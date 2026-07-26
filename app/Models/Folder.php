@@ -10,8 +10,8 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Folder extends Model
 {
-    use HasFactory;
     use BelongsToUser;
+    use HasFactory;
 
     /**
      * The attributes that are mass assignable.

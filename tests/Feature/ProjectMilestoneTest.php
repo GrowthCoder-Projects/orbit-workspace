@@ -2,6 +2,7 @@
 
 use App\Models\Project;
 use App\Models\ProjectMilestone;
+use App\Models\Task;
 use App\Models\User;
 
 test('authenticated user can add milestone to project', function () {
@@ -102,8 +103,8 @@ test('tasks project_milestone_id is set to null when milestone is deleted', func
 
     $project = Project::factory()->create();
     $milestone = ProjectMilestone::factory()->create(['project_id' => $project->id]);
-    
-    $task = \App\Models\Task::factory()->create([
+
+    $task = Task::factory()->create([
         'project_id' => $project->id,
         'project_milestone_id' => $milestone->id,
     ]);

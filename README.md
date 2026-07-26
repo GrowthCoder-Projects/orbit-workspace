@@ -24,6 +24,7 @@ An open-source, self-hostable, all-in-one personal & professional workspace mana
   <a href="#-quick-start-guide"><b>Quick Start</b></a> &nbsp;•&nbsp;
   <a href="#-testing--code-quality"><b>Testing & Quality</b></a> &nbsp;•&nbsp;
   <a href="#-directory-structure"><b>Architecture</b></a> &nbsp;•&nbsp;
+  <a href="docs/api.md"><b>REST API Docs</b></a> &nbsp;•&nbsp;
   <a href="#-contributing"><b>Contributing</b></a>
 </p>
 

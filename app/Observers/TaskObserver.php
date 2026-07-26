@@ -3,6 +3,7 @@
 namespace App\Observers;
 
 use App\Models\Task;
+use App\Notifications\ActivityNotification;
 use App\Services\ActivityLogService;
 
 class TaskObserver
@@ -24,8 +25,8 @@ class TaskObserver
             // Send Telegram notification for task status changes
             $user = auth()->user();
             if ($user) {
-                $user->notify(new \App\Notifications\ActivityNotification(
-                    title: "🔄 Task Status Berubah",
+                $user->notify(new ActivityNotification(
+                    title: '🔄 Task Status Berubah',
                     body: "Task \"{$task->title}\" berubah dari *{$from}* ke *{$to}*",
                 ));
             }

@@ -20,7 +20,7 @@ class DocumentFolderFactory extends Factory
     {
         return [
             'user_id' => User::factory(),
-            'name' => $this->faker->word() . ' Folder',
+            'name' => $this->faker->word().' Folder',
             'parent_id' => null,
             'project_id' => null,
         ];

@@ -27,13 +27,13 @@ class FinanceTransactionController extends Controller
         if ($search = $request->input('search')) {
             $query->where(function ($q) use ($search) {
                 $q->where('description', 'like', "%{$search}%")
-                  ->orWhere('tags', 'like', "%{$search}%")
-                  ->orWhereHas('category', function ($sub) use ($search) {
-                      $sub->where('name', 'like', "%{$search}%");
-                  })
-                  ->orWhereHas('account', function ($sub) use ($search) {
-                      $sub->where('name', 'like', "%{$search}%");
-                  });
+                    ->orWhere('tags', 'like', "%{$search}%")
+                    ->orWhereHas('category', function ($sub) use ($search) {
+                        $sub->where('name', 'like', "%{$search}%");
+                    })
+                    ->orWhereHas('account', function ($sub) use ($search) {
+                        $sub->where('name', 'like', "%{$search}%");
+                    });
             });
         }
 
@@ -46,7 +46,7 @@ class FinanceTransactionController extends Controller
         if ($accountId = $request->input('account_id')) {
             $query->where(function ($q) use ($accountId) {
                 $q->where('account_id', $accountId)
-                  ->orWhere('destination_account_id', $accountId);
+                    ->orWhere('destination_account_id', $accountId);
             });
         }
 
@@ -88,6 +88,13 @@ class FinanceTransactionController extends Controller
      */
     public function store(Request $request): RedirectResponse
     {
+        if ($request->has('converted_amount') && (empty($request->converted_amount) || (float) $request->converted_amount <= 0 || $request->type !== 'transfer')) {
+            $request->merge(['converted_amount' => null]);
+        }
+        if ($request->has('exchange_rate') && (empty($request->exchange_rate) || (float) $request->exchange_rate <= 0 || $request->type !== 'transfer')) {
+            $request->merge(['exchange_rate' => null]);
+        }
+
         $validated = $request->validate([
             'account_id' => ['required', 'exists:finance_accounts,id'],
             'destination_account_id' => ['nullable', 'required_if:type,transfer', 'exists:finance_accounts,id', 'different:account_id'],
@@ -138,6 +145,13 @@ class FinanceTransactionController extends Controller
      */
     public function update(Request $request, FinanceTransaction $transaction): RedirectResponse
     {
+        if ($request->has('converted_amount') && (empty($request->converted_amount) || (float) $request->converted_amount <= 0 || $request->type !== 'transfer')) {
+            $request->merge(['converted_amount' => null]);
+        }
+        if ($request->has('exchange_rate') && (empty($request->exchange_rate) || (float) $request->exchange_rate <= 0 || $request->type !== 'transfer')) {
+            $request->merge(['exchange_rate' => null]);
+        }
+
         $validated = $request->validate([
             'account_id' => ['required', 'exists:finance_accounts,id'],
             'destination_account_id' => ['nullable', 'required_if:type,transfer', 'exists:finance_accounts,id', 'different:account_id'],

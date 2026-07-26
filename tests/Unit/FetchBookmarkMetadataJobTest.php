@@ -3,10 +3,11 @@
 use App\Jobs\FetchBookmarkMetadataJob;
 use App\Models\Bookmark;
 use App\Models\User;
-use Illuminate\Support\Facades\Http;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Http;
+use Tests\TestCase;
 
-uses(Tests\TestCase::class, RefreshDatabase::class);
+uses(TestCase::class, RefreshDatabase::class);
 
 test('job blocks loopback and private ip addresses (SSRF prevention)', function () {
     $user = User::factory()->create();
@@ -32,7 +33,7 @@ test('job successfully parses metadata from html response', function () {
         'status' => 'pending',
     ]);
 
-    $fakeHtml = <<<HTML
+    $fakeHtml = <<<'HTML'
 <!DOCTYPE html>
 <html>
 <head>

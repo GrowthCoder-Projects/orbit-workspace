@@ -5,7 +5,6 @@ namespace App\Console\Commands;
 use App\Models\Habit;
 use App\Models\HabitLog;
 use App\Notifications\HabitReminderNotification;
-use Carbon\Carbon;
 use Illuminate\Console\Command;
 
 class SendHabitReminders extends Command
@@ -66,7 +65,7 @@ class SendHabitReminders extends Command
                     ->where('completed_date', $todayStr)
                     ->exists();
 
-                if (!$alreadyCompleted) {
+                if (! $alreadyCompleted) {
                     $user = $habit->user;
                     if ($user) {
                         $user->notify(new HabitReminderNotification($habit));

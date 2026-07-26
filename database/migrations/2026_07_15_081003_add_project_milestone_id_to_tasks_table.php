@@ -16,7 +16,7 @@ return new class extends Migration
     {
         Schema::table('tasks', function (Blueprint $table) {
             $table->unsignedBigInteger('project_milestone_id')->nullable()->after('project_id');
-            
+
             $table->foreign('project_milestone_id', 'fk_tasks_project_milestone')
                 ->references('id')
                 ->on('project_milestones')

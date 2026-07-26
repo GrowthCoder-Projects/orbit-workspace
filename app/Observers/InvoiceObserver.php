@@ -3,6 +3,7 @@
 namespace App\Observers;
 
 use App\Models\Invoice;
+use App\Notifications\ActivityNotification;
 use App\Services\ActivityLogService;
 
 class InvoiceObserver
@@ -23,8 +24,8 @@ class InvoiceObserver
             // Send Telegram notification for invoice status changes
             $user = auth()->user();
             if ($user) {
-                $user->notify(new \App\Notifications\ActivityNotification(
-                    title: "🧾 Invoice Status Berubah",
+                $user->notify(new ActivityNotification(
+                    title: '🧾 Invoice Status Berubah',
                     body: "Invoice *{$invoice->invoice_number}* berubah dari *{$from}* ke *{$to}*",
                 ));
             }

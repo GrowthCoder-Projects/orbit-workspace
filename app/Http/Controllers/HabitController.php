@@ -16,9 +16,7 @@ class HabitController extends Controller
     /**
      * Create a new controller instance.
      */
-    public function __construct(protected HabitStreakService $streakService)
-    {
-    }
+    public function __construct(protected HabitStreakService $streakService) {}
 
     /**
      * Display a listing of the resource.
@@ -147,7 +145,7 @@ class HabitController extends Controller
     public function toggleArchive(Habit $habit): RedirectResponse
     {
         $habit->update([
-            'is_active' => !$habit->is_active,
+            'is_active' => ! $habit->is_active,
             'archived_at' => $habit->is_active ? now() : null,
         ]);
 

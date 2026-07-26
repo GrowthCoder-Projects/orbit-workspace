@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\FinanceCategory;
 use App\Models\FinanceTransaction;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -58,7 +57,7 @@ class FinanceReportController extends Controller
             $currency = $tx->account->currency ?? 'IDR';
             $rate = $exchangeRates[$currency] ?? 1.0;
 
-            if (!isset($categorySums[$catName])) {
+            if (! isset($categorySums[$catName])) {
                 $categorySums[$catName] = [
                     'amount' => 0.0,
                     'color' => $catColor,
@@ -68,7 +67,7 @@ class FinanceReportController extends Controller
         }
 
         // Sort by amount descending
-        uasort($categorySums, fn($a, $b) => $b['amount'] <=> $a['amount']);
+        uasort($categorySums, fn ($a, $b) => $b['amount'] <=> $a['amount']);
 
         $categoryChartData = [
             'labels' => array_keys($categorySums),
@@ -76,8 +75,8 @@ class FinanceReportController extends Controller
                 [
                     'data' => array_column($categorySums, 'amount'),
                     'backgroundColor' => array_column($categorySums, 'color'),
-                ]
-            ]
+                ],
+            ],
         ];
 
         // 3. Year cash flow aggregation
@@ -101,8 +100,8 @@ class FinanceReportController extends Controller
                     'data' => $monthlyExpense,
                     'backgroundColor' => '#ef4444',
                     'borderColor' => '#ef4444',
-                ]
-            ]
+                ],
+            ],
         ];
 
         return Inertia::render('Finance/Reports', [

@@ -4,10 +4,9 @@ use App\Models\ActivityLog;
 use App\Models\Project;
 use App\Models\Task;
 use App\Models\User;
+use App\Notifications\ActivityNotification;
 use App\Services\ActivityLogService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Support\Facades\Event;
-use Illuminate\Auth\Events\Login;
 
 uses(RefreshDatabase::class);
 
@@ -181,7 +180,7 @@ test('mark all read sets read_at for all unread notifications', function () {
     $this->actingAs($user);
 
     // Create a fake notification
-    $user->notify(new \App\Notifications\ActivityNotification(
+    $user->notify(new ActivityNotification(
         title: 'Test Notif',
         body: 'Test body',
     ));

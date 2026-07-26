@@ -3,7 +3,7 @@
 namespace App\Models;
 
 use App\Concerns\BelongsToUser;
-use Carbon\Carbon;
+use Carbon\CarbonInterface;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Collection;
@@ -41,7 +41,7 @@ class CalendarEvent extends Model
      * For non-recurring events, it returns the event itself if it overlaps.
      * For recurring events, it calculates and returns cloned instances with adjusted dates.
      */
-    public function getInstancesInRange(\Carbon\CarbonInterface $rangeStart, \Carbon\CarbonInterface $rangeEnd): Collection
+    public function getInstancesInRange(CarbonInterface $rangeStart, CarbonInterface $rangeEnd): Collection
     {
         $instances = collect();
 
@@ -50,14 +50,15 @@ class CalendarEvent extends Model
             if ($this->start_at->lte($rangeEnd) && $this->end_at->gte($rangeStart)) {
                 $instances->push(clone $this);
             }
+
             return $instances;
         }
 
         // For recurring events
         $currentStart = $this->start_at->copy();
         $durationInSeconds = $this->start_at->diffInSeconds($this->end_at);
-        $recurrenceLimit = $this->recurrence_end 
-            ? $this->recurrence_end->copy()->endOfDay() 
+        $recurrenceLimit = $this->recurrence_end
+            ? $this->recurrence_end->copy()->endOfDay()
             : $rangeEnd->copy()->endOfDay();
 
         // Safety limit to prevent infinite loops if start date is after end date or similar
