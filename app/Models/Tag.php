@@ -10,8 +10,8 @@ use Illuminate\Support\Str;
 
 class Tag extends Model
 {
-    use HasFactory;
     use BelongsToUser;
+    use HasFactory;
 
     /**
      * The attributes that are mass assignable.

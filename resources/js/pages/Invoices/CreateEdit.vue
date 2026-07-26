@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Head, Link, useForm, setLayoutProps } from '@inertiajs/vue3';
+import { Head, Link, useForm, usePage, setLayoutProps } from '@inertiajs/vue3';
 import {
     Plus,
     Trash2,
@@ -32,6 +32,7 @@ import {
     store as storeInvoice,
     update as updateInvoice,
     index as invoicesIndex,
+    show as showInvoice,
 } from '@/routes/invoices';
 
 const props = defineProps<{
@@ -85,8 +86,21 @@ const form = useForm({
     _method: 'POST', // Simulated method for file uploads
 });
 
+const page = usePage();
+const defaultAppLogo = computed(
+    () => (page.props.settings as any)?.app_logo || '/storage/logo/logo-orbit.png',
+);
+
 // Logo preview
 const logoPreview = ref<string | null>(null);
+
+const effectiveLogoUrl = computed(() => {
+    return logoPreview.value || defaultAppLogo.value;
+});
+
+const handleLogoError = () => {
+    logoPreview.value = defaultAppLogo.value;
+};
 
 onMounted(() => {
     if (isEdit.value && props.invoice) {
@@ -112,7 +126,7 @@ onMounted(() => {
         form.finance_account_id = props.invoice.finance_account_id ? props.invoice.finance_account_id.toString() : '';
         
         if (props.invoice.logo_path) {
-            logoPreview.value = `/storage/${props.invoice.logo_path}`;
+            logoPreview.value = `/media/image/${props.invoice.logo_path}`;
         }
 
         // Map items
@@ -333,7 +347,7 @@ const submitForm = () => {
         <!-- Header -->
         <div class="flex flex-col justify-between gap-4 border-b border-sidebar-border/60 pb-5 sm:flex-row sm:items-center">
             <div class="flex items-center gap-3">
-                <Link :href="isEdit ? `/invoices/${invoice.id}` : '/invoices'">
+                <Link :href="isEdit ? showInvoice(invoice.id).url : invoicesIndex().url">
                     <Button variant="ghost" size="icon" class="size-9">
                         <ArrowLeft class="size-4" />
                     </Button>
@@ -588,22 +602,30 @@ const submitForm = () => {
                                 @change="handleLogoUpload"
                             />
                             
-                            <div v-if="logoPreview" class="relative flex items-center justify-center p-1 bg-white rounded border border-zinc-200 group/logo-container">
-                                <img :src="logoPreview" class="max-h-12 max-w-[180px] object-contain" />
+                            <div class="relative flex items-center justify-center p-1 bg-white rounded border border-zinc-200 group/logo-container">
+                                <img
+                                    :src="effectiveLogoUrl"
+                                    @error="handleLogoError"
+                                    class="max-h-12 max-w-[180px] object-contain"
+                                />
+                                <label
+                                    for="paper-logo-input"
+                                    class="absolute inset-0 bg-black/40 text-white opacity-0 group-hover/logo-container:opacity-100 transition-opacity flex items-center justify-center cursor-pointer rounded text-[10px] font-medium"
+                                >
+                                    Ubah Logo
+                                </label>
                                 <Button
+                                    v-if="logoPreview && logoPreview !== defaultAppLogo"
                                     type="button"
                                     variant="destructive"
                                     size="icon"
-                                    class="absolute -top-1.5 -right-1.5 size-5 rounded-full opacity-0 group-hover/logo-container:opacity-100 transition-opacity"
+                                    class="absolute -top-1.5 -right-1.5 size-5 rounded-full opacity-0 group-hover/logo-container:opacity-100 transition-opacity z-10"
                                     @click="logoPreview = null; form.logo = null;"
+                                    title="Reset logo ke default"
                                 >
                                     <X class="size-3" />
                                 </Button>
                             </div>
-                            <label v-else for="paper-logo-input" class="flex flex-col items-center justify-center border border-dashed border-zinc-300 rounded px-3 py-2 bg-zinc-50 hover:bg-zinc-100 cursor-pointer transition-colors text-zinc-500">
-                                <Image class="size-5 text-zinc-400 mb-0.5" />
-                                <span class="text-[9px]">Klik unggah logo</span>
-                            </label>
                         </div>
                         
                         <!-- Brand Name Input -->
@@ -884,7 +906,7 @@ const submitForm = () => {
                             <div class="text-[9px] uppercase font-bold text-zinc-400 tracking-wider">Metode Pembayaran</div>
                             <div v-if="selectedAccount" class="mt-1 p-3 bg-zinc-50 dark:bg-zinc-900 rounded border border-zinc-100 dark:border-zinc-800 flex items-start gap-3">
                                 <div v-if="selectedAccount.logo_path" class="size-10 rounded border border-zinc-200 dark:border-zinc-800 bg-white flex items-center justify-center p-1 shrink-0 shadow-xs">
-                                    <img :src="`/storage/${selectedAccount.logo_path}`" class="size-full object-contain" />
+                                    <img :src="`/media/image/${selectedAccount.logo_path}`" class="size-full object-contain" />
                                 </div>
                                 <div class="min-w-0 flex-1 text-xs space-y-0.5 text-zinc-700">
                                     <div class="font-bold text-zinc-800">{{ selectedAccount.name }} <span class="text-[9px] text-zinc-400 font-normal uppercase">({{ selectedAccount.type }})</span></div>

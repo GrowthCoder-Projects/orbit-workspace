@@ -2,10 +2,8 @@
 
 use App\Models\Client;
 use App\Models\FinanceAccount;
-use App\Models\FinanceCategory;
 use App\Models\Invoice;
 use App\Models\InvoiceItem;
-use App\Models\Project;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
@@ -84,8 +82,8 @@ test('authenticated user can store invoice with items', function () {
                 'unit_price' => 1000000.00, // 1M subtotal
                 'tax_rate' => 0.00,
                 'discount_amount' => 0.00,
-            ]
-        ]
+            ],
+        ],
     ];
 
     $response = $this->post(route('invoices.store'), $invoiceData);
@@ -155,8 +153,8 @@ test('authenticated user can update invoice and recreate items', function () {
                 'unit_price' => 250000.00,
                 'tax_rate' => 0.00,
                 'discount_amount' => 0.00,
-            ]
-        ]
+            ],
+        ],
     ];
 
     $response = $this->put(route('invoices.update', $invoice), $updateData);
@@ -191,7 +189,7 @@ test('authenticated user can delete an invoice', function () {
     $response = $this->delete(route('invoices.destroy', $invoice));
 
     $response->assertRedirect(route('invoices.index'));
-    
+
     $this->assertDatabaseMissing('invoices', ['id' => $invoice->id]);
     $this->assertDatabaseMissing('invoice_items', ['id' => $item->id]);
 });
@@ -212,7 +210,7 @@ test('authenticated user can pay an invoice and trigger finance transaction', fu
     ]);
 
     $response->assertRedirect();
-    
+
     // Verify invoice is paid
     $this->assertEquals('paid', $invoice->fresh()->status);
     $this->assertNotNull($invoice->fresh()->paid_at);
@@ -223,7 +221,7 @@ test('authenticated user can pay an invoice and trigger finance transaction', fu
         'account_id' => $account->id,
         'type' => 'income',
         'amount' => 500000.00,
-        'description' => 'Pembayaran Invoice: ' . $invoice->invoice_number,
+        'description' => 'Pembayaran Invoice: '.$invoice->invoice_number,
     ]);
 
     // Verify observer: account balance should be updated (1M + 500k = 1.5M)

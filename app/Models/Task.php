@@ -92,4 +92,14 @@ class Task extends Model
     {
         return $this->hasMany(TaskChecklist::class)->orderBy('sort_order');
     }
+
+    /**
+     * Get the time logs for the task.
+     *
+     * @return HasMany<TaskTimeLog, $this>
+     */
+    public function timeLogs(): HasMany
+    {
+        return $this->hasMany(TaskTimeLog::class);
+    }
 }

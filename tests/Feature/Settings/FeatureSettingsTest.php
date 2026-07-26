@@ -29,7 +29,7 @@ test('can update enabled modules settings', function () {
     ]);
 
     $response->assertRedirect();
-    
+
     $enabledModules = Setting::getValue('enabled_modules');
     expect($enabledModules['finance'])->toBeFalse();
     expect($enabledModules['projects'])->toBeTrue();
@@ -37,7 +37,7 @@ test('can update enabled modules settings', function () {
 
 test('redirects from route of a disabled module to dashboard', function () {
     $this->actingAs($this->user);
-    
+
     Setting::setValue('enabled_modules', [
         'projects' => true,
         'tasks' => true,

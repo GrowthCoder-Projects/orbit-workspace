@@ -22,7 +22,7 @@ class NoteFactory extends Factory
             'user_id' => User::factory(),
             'folder_id' => null,
             'title' => $this->faker->sentence(),
-            'content' => '<p>' . $this->faker->paragraph() . '</p>',
+            'content' => '<p>'.$this->faker->paragraph().'</p>',
             'is_favorite' => false,
             'is_archived' => false,
         ];

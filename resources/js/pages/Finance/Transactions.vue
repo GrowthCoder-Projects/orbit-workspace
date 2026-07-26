@@ -180,7 +180,7 @@ const openEdit = (tx: any) => {
     editForm.client_id = tx.client_id ? tx.client_id.toString() : '';
     editForm.type = tx.type;
     editForm.amount = tx.amount;
-    editForm.converted_amount = tx.converted_amount || 0;
+    editForm.converted_amount = tx.converted_amount || null;
     editForm.exchange_rate = tx.exchange_rate || 1.0;
     editForm.transaction_date = tx.transaction_date;
     editForm.description = tx.description || '';
@@ -730,7 +730,7 @@ const getTxAmountClass = (type: string) => {
                                     >
                                         <a
                                             v-if="tx.attachment_path"
-                                            :href="`/storage/${tx.attachment_path}`"
+                                            :href="`/media/image/${tx.attachment_path}`"
                                             target="_blank"
                                             class="rounded p-1.5 text-muted-foreground hover:bg-muted hover:text-foreground"
                                             title="Lihat Lampiran"

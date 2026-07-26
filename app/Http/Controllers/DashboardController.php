@@ -8,12 +8,14 @@ use App\Models\FinanceAccount;
 use App\Models\FinanceBill;
 use App\Models\FinanceTransaction;
 use App\Models\Folder;
+use App\Models\Habit;
+use App\Models\HabitLog;
 use App\Models\Invoice;
 use App\Models\Note;
 use App\Models\Project;
 use App\Models\ProjectMilestone;
-use App\Models\Habit;
 use App\Models\Task;
+use App\Models\TaskTimeLog;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
@@ -73,13 +75,13 @@ class DashboardController extends Controller
 
         $formattedCalendarEvents = $todayCalendarEvents->map(function ($event) {
             $durationStr = '';
-            if (!$event->is_all_day && $event->start_at && $event->end_at) {
+            if (! $event->is_all_day && $event->start_at && $event->end_at) {
                 $diffMinutes = $event->start_at->diffInMinutes($event->end_at);
                 if ($diffMinutes >= 60) {
                     $hours = round($diffMinutes / 60, 1);
-                    $durationStr = $hours . 'j';
+                    $durationStr = $hours.'j';
                 } else {
-                    $durationStr = $diffMinutes . 'm';
+                    $durationStr = $diffMinutes.'m';
                 }
             }
 
@@ -153,10 +155,11 @@ class DashboardController extends Controller
                 $total = $task->checklists->count();
                 $completed = $task->checklists->where('is_completed', true)->count();
                 $task->checklist_progress = $total > 0 ? "($completed/$total)" : '';
+
                 return $task;
             });
 
-        // 5. Weekly Chart Data (Completed tasks & mock focus hours)
+        // 5. Weekly Chart Data (Completed tasks & real focus hours from Task Timers, Calendar Events, & Habit Logs)
         $startOfWeek = Carbon::now()->startOfWeek();
         $weeklyChartData = [
             'labels' => ['Sen', 'Sel', 'Rab', 'Kam', 'Jum', 'Sab', 'Min'],
@@ -164,15 +167,45 @@ class DashboardController extends Controller
             'focusHours' => [],
         ];
 
+        $allEvents = CalendarEvent::all();
+
         for ($i = 0; $i < 7; $i++) {
             $date = $startOfWeek->copy()->addDays($i);
+            $dateStr = $date->toDateString();
+            $dayStart = $date->copy()->startOfDay();
+            $dayEnd = $date->copy()->endOfDay();
+
+            // Completed tasks count
             $tasksCompleted = Task::where('status', 'done')
-                ->whereDate('completed_at', $date->toDateString())
+                ->whereDate('completed_at', $dateStr)
                 ->count();
-            
+
+            // 1. Task Focus Timer Log hours
+            $timerSeconds = TaskTimeLog::whereDate('started_at', $dateStr)->sum('duration_seconds');
+            $timerHours = $timerSeconds / 3600;
+
+            // 2. Calendar Events focus hours (non-all-day scheduled events)
+            $eventHours = 0;
+            foreach ($allEvents as $event) {
+                if (! $event->is_all_day) {
+                    $instances = $event->getInstancesInRange($dayStart, $dayEnd);
+                    foreach ($instances as $inst) {
+                        if ($inst->start_at && $inst->end_at) {
+                            $eventHours += $inst->start_at->diffInMinutes($inst->end_at) / 60;
+                        }
+                    }
+                }
+            }
+
+            // 3. Habit Log Focus Hours (30 mins per completed habit)
+            $completedHabits = HabitLog::whereDate('completed_date', $dateStr)->count();
+            $habitHours = $completedHabits * 0.5;
+
+            // Combined real focus hours (rounded to 1 decimal place)
+            $totalFocusHours = round($timerHours + $eventHours + $habitHours, 1);
+
             $weeklyChartData['completedTasks'][] = $tasksCompleted;
-            // Focus time simulation: completed tasks * 1.5h with a base of random hours if none completed
-            $weeklyChartData['focusHours'][] = $tasksCompleted > 0 ? ($tasksCompleted * 1.5) : rand(1, 4);
+            $weeklyChartData['focusHours'][] = $totalFocusHours;
         }
 
         // 6. Expense Chart Data (Past 30 days)
@@ -189,7 +222,7 @@ class DashboardController extends Controller
             $currency = $tx->account->currency ?? 'IDR';
             $rate = $exchangeRates[$currency] ?? 1.0;
 
-            if (!isset($categorySums[$catName])) {
+            if (! isset($categorySums[$catName])) {
                 $categorySums[$catName] = [
                     'amount' => 0.0,
                     'color' => $catColor,
@@ -197,7 +230,7 @@ class DashboardController extends Controller
             }
             $categorySums[$catName]['amount'] += (float) ($tx->amount * $rate);
         }
-        uasort($categorySums, fn($a, $b) => $b['amount'] <=> $a['amount']);
+        uasort($categorySums, fn ($a, $b) => $b['amount'] <=> $a['amount']);
 
         $expenseChartData = [
             'labels' => array_keys($categorySums),
@@ -205,8 +238,8 @@ class DashboardController extends Controller
                 [
                     'data' => array_column($categorySums, 'amount'),
                     'backgroundColor' => array_column($categorySums, 'color'),
-                ]
-            ]
+                ],
+            ],
         ];
 
         // 7. Upcoming Bills
@@ -214,10 +247,11 @@ class DashboardController extends Controller
             ->where('is_active', true)
             ->get()
             ->filter(function ($b) use ($now) {
-                if (!$b->last_paid_at) {
+                if (! $b->last_paid_at) {
                     return true;
                 }
-                return !($b->last_paid_at->month === $now->month && $b->last_paid_at->year === $now->year);
+
+                return ! ($b->last_paid_at->month === $now->month && $b->last_paid_at->year === $now->year);
             })
             ->values()
             ->take(5);
@@ -248,8 +282,8 @@ class DashboardController extends Controller
                     'backgroundColor' => 'rgba(59, 130, 246, 0.1)',
                     'tension' => 0.4,
                     'fill' => true,
-                ]
-            ]
+                ],
+            ],
         ];
 
         // 8. Invoice Stats (Sent, Paid, Overdue)
@@ -270,7 +304,7 @@ class DashboardController extends Controller
 
         // 9. Quick Draft Note & Recent Notes
         $quickDraftNote = Note::where('title', 'Quick Draft')->first();
-        if (!$quickDraftNote) {
+        if (! $quickDraftNote) {
             $quickDraftNote = Note::create([
                 'title' => 'Quick Draft',
                 'content' => '<p>Mulai menulis ide Anda di sini...</p>',
@@ -288,8 +322,9 @@ class DashboardController extends Controller
                 // strip HTML tags for preview text
                 $note->preview = trim(strip_tags($note->content));
                 if (strlen($note->preview) > 60) {
-                    $note->preview = substr($note->preview, 0, 60) . '...';
+                    $note->preview = substr($note->preview, 0, 60).'...';
                 }
+
                 return $note;
             });
 

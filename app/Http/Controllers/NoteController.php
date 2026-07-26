@@ -12,7 +12,6 @@ use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Inertia\Inertia;
 use Inertia\Response as InertiaResponse;
-use Symfony\Component\HttpFoundation\BinaryFileResponse;
 
 class NoteController extends Controller
 {
@@ -33,6 +32,7 @@ class NoteController extends Controller
             ->map(function ($note) {
                 // Add a text preview snippet
                 $note->snippet = Str::limit(strip_tags($note->content ?? ''), 120);
+
                 return $note;
             });
 
@@ -72,7 +72,7 @@ class NoteController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Note $note): RedirectResponse
+    public function update(Request $request, Note $note): JsonResponse|RedirectResponse
     {
         $validated = $request->validate([
             'title' => ['required', 'string', 'max:255'],
@@ -87,6 +87,13 @@ class NoteController extends Controller
         // Sync backlinks when content changes
         if ($request->has('content')) {
             $this->syncBacklinks($note);
+        }
+
+        if ($request->wantsJson() || $request->expectsJson()) {
+            return response()->json([
+                'message' => 'Note updated successfully.',
+                'note' => $note->fresh(['folder', 'backlinks', 'outgoingLinks']),
+            ]);
         }
 
         return redirect()->route('notes.index', ['id' => $note->id])
@@ -118,7 +125,7 @@ class NoteController extends Controller
             $filename = basename($path);
 
             return response()->json([
-                'url' => route('notes.images.show', ['filename' => $filename]),
+                'url' => route('media.image', ['path' => 'notes/'.$filename]),
             ]);
         }
 
@@ -130,9 +137,10 @@ class NoteController extends Controller
      */
     public function showImage(string $filename)
     {
+        $filename = basename($filename);
         $path = "notes/{$filename}";
 
-        if (!Storage::disk('local')->exists($path)) {
+        if (! Storage::disk('local')->exists($path)) {
             abort(404);
         }
 
@@ -140,7 +148,7 @@ class NoteController extends Controller
         $mimeType = Storage::disk('local')->mimeType($path);
 
         return response()->file($filePath, [
-            'Content-Type' => $mimeType,
+            'Content-Type' => $mimeType ?: 'application/octet-stream',
             'Cache-Control' => 'private, max-age=86400',
         ]);
     }
@@ -160,6 +168,7 @@ class NoteController extends Controller
 
         if (empty($targetTitles)) {
             $note->outgoingLinks()->sync([]);
+
             return;
         }
 

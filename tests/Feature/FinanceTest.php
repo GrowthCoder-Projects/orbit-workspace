@@ -1,22 +1,18 @@
 <?php
 
 use App\Models\FinanceAccount;
+use App\Models\FinanceBill;
 use App\Models\FinanceCategory;
 use App\Models\FinanceTransaction;
-use App\Models\FinanceBudget;
-use App\Models\FinanceSaving;
-use App\Models\FinanceGoal;
-use App\Models\FinanceInvestment;
-use App\Models\FinanceAsset;
-use App\Models\FinanceLiability;
-use App\Models\FinanceBill;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\Storage;
 
 uses(RefreshDatabase::class);
 
 /* -------------------------------------------------------------------------- */
-/* OLD TESTS (ACCOUNTS, TRANSACTIONS, OBSERVERS)                              */
+/* OLD TESTS (ACCOUNTS, TRANSACTIONS, OBSERVERS) */
 /* -------------------------------------------------------------------------- */
 
 test('guest cannot view finance dashboard', function () {
@@ -42,14 +38,14 @@ test('authenticated user can create a finance account', function () {
     $user = User::factory()->create();
     $this->actingAs($user);
 
-    \Illuminate\Support\Facades\Storage::fake('public');
+    Storage::fake('public');
 
     $response = $this->post(route('accounts.store'), [
         'name' => 'BCA Syariah',
         'type' => 'bank',
         'account_number' => '1234567890',
         'account_holder' => 'Ihsan',
-        'logo' => \Illuminate\Http\UploadedFile::fake()->image('logo.png'),
+        'logo' => UploadedFile::fake()->image('logo.png'),
         'balance' => 5000000.00,
         'currency' => 'IDR',
         'color' => '#10b981',
@@ -66,7 +62,7 @@ test('authenticated user can create a finance account', function () {
 
     $account = FinanceAccount::where('name', 'BCA Syariah')->first();
     $this->assertNotNull($account->logo_path);
-    \Illuminate\Support\Facades\Storage::disk('public')->assertExists($account->logo_path);
+    Storage::disk('public')->assertExists($account->logo_path);
 
     $response->assertRedirect();
 });
@@ -75,7 +71,7 @@ test('authenticated user can update a finance account', function () {
     $user = User::factory()->create();
     $this->actingAs($user);
 
-    \Illuminate\Support\Facades\Storage::fake('public');
+    Storage::fake('public');
 
     $account = FinanceAccount::factory()->create([
         'name' => 'Mandiri Savings',
@@ -87,7 +83,7 @@ test('authenticated user can update a finance account', function () {
         'type' => $account->type,
         'account_number' => '0987654321',
         'account_holder' => 'Workspace',
-        'logo' => \Illuminate\Http\UploadedFile::fake()->image('new-logo.png'),
+        'logo' => UploadedFile::fake()->image('new-logo.png'),
         'balance' => 2000.00,
         'currency' => $account->currency,
         'color' => '#ffffff',
@@ -104,7 +100,7 @@ test('authenticated user can update a finance account', function () {
 
     $account->refresh();
     $this->assertNotNull($account->logo_path);
-    \Illuminate\Support\Facades\Storage::disk('public')->assertExists($account->logo_path);
+    Storage::disk('public')->assertExists($account->logo_path);
 
     $response->assertRedirect();
 });
@@ -322,7 +318,7 @@ test('observer: balance adjusts correctly when transaction is updated', function
 });
 
 /* -------------------------------------------------------------------------- */
-/* NEW SUB-MODULES TESTS                                                      */
+/* NEW SUB-MODULES TESTS */
 /* -------------------------------------------------------------------------- */
 
 test('authenticated user can view budgets page and store budget', function () {
@@ -457,7 +453,7 @@ test('authenticated user can pay a bill with one-click and register transaction 
 
     $account = FinanceAccount::factory()->create(['balance' => 5000.00]);
     $category = FinanceCategory::factory()->create(['type' => 'expense']);
-    
+
     $bill = FinanceBill::create([
         'name' => 'Netflix Premium',
         'type' => 'subscription',
@@ -498,7 +494,7 @@ test('authenticated user can view bill payment history', function () {
 
     $account = FinanceAccount::factory()->create(['balance' => 5000.00]);
     $category = FinanceCategory::factory()->create(['type' => 'expense']);
-    
+
     $bill = FinanceBill::create([
         'name' => 'Netflix Premium',
         'type' => 'subscription',

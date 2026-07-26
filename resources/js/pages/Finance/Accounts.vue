@@ -400,7 +400,7 @@ const handleTransfer = () => {
                     <!-- Logo & Rincian Rekening -->
                     <div class="flex items-center gap-3 mt-3">
                         <div v-if="acc.logo_path" class="size-10 rounded border border-zinc-200 dark:border-zinc-800 bg-white flex items-center justify-center p-1 shrink-0 shadow-xs">
-                            <img :src="`/storage/${acc.logo_path}`" class="size-full object-contain" />
+                            <img :src="`/media/image/${acc.logo_path}`" class="size-full object-contain" />
                         </div>
                         <div v-else class="size-10 rounded border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-900 flex items-center justify-center shrink-0 shadow-xs">
                             <component :is="accountTypeIcon(acc.type)" class="size-5 text-muted-foreground" />

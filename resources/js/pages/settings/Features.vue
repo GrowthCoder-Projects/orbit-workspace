@@ -66,7 +66,7 @@ const toggleModule = (key: keyof typeof form.data) => {
     // Toggle locally first
     (form as any)[key] = !(form as any)[key];
     
-    form.patch('/settings/features', {
+    form.patch('/app/settings/features', {
         preserveScroll: true,
         onSuccess: () => {
             toast.success('Pengaturan fitur diperbarui.');

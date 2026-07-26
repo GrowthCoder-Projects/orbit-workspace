@@ -18,7 +18,7 @@ class FinanceAccountFactory extends Factory
     public function definition(): array
     {
         return [
-            'name' => $this->faker->word() . ' Bank',
+            'name' => $this->faker->word().' Bank',
             'type' => $this->faker->randomElement(['cash', 'bank', 'e-wallet', 'credit_card', 'investment']),
             'balance' => $this->faker->randomFloat(2, 1000000, 100000000),
             'currency' => $this->faker->randomElement(['IDR', 'USD']),

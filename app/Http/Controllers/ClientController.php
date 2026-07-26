@@ -2,8 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
-
 use App\Http\Requests\StoreClientRequest;
 use App\Http\Requests\UpdateClientRequest;
 use App\Models\Client;
@@ -57,7 +55,7 @@ class ClientController extends Controller
     {
         // Nullify client_id on associated projects (or cascade if required)
         $client->projects()->update(['client_id' => null]);
-        
+
         $client->delete();
 
         return redirect()->route('clients.index')->with('success', 'Client deleted successfully.');

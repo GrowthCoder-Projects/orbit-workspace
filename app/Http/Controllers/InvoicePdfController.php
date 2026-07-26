@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 use App\Models\Invoice;
 use Barryvdh\DomPDF\Facade\Pdf;
-use Illuminate\Http\Response;
 
 class InvoicePdfController extends Controller
 {
@@ -16,7 +15,7 @@ class InvoicePdfController extends Controller
         $invoice->load(['client', 'project', 'items', 'user', 'financeAccount']);
 
         $template = $invoice->template_name;
-        if (!in_array($template, ['modern', 'classic', 'minimalist'])) {
+        if (! in_array($template, ['modern', 'classic', 'minimalist'])) {
             $template = 'modern';
         }
 

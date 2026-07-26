@@ -75,7 +75,7 @@ class DocumentController extends Controller
         if ($search) {
             $documentsQuery->where(function ($q) use ($search) {
                 $q->where('name', 'like', "%{$search}%")
-                  ->orWhere('description', 'like', "%{$search}%");
+                    ->orWhere('description', 'like', "%{$search}%");
             });
         }
 
@@ -203,7 +203,7 @@ class DocumentController extends Controller
      */
     public function preview(DocumentVersion $version): BinaryFileResponse
     {
-        if (!Storage::disk('local')->exists($version->file_path)) {
+        if (! Storage::disk('local')->exists($version->file_path)) {
             abort(404, 'File not found on storage.');
         }
 
@@ -211,7 +211,7 @@ class DocumentController extends Controller
 
         return response()->file($path, [
             'Content-Type' => $version->mime_type,
-            'Content-Disposition' => 'inline; filename="' . $version->file_name . '"',
+            'Content-Disposition' => 'inline; filename="'.$version->file_name.'"',
         ]);
     }
 
@@ -220,7 +220,7 @@ class DocumentController extends Controller
      */
     public function download(DocumentVersion $version): BinaryFileResponse
     {
-        if (!Storage::disk('local')->exists($version->file_path)) {
+        if (! Storage::disk('local')->exists($version->file_path)) {
             abort(404, 'File not found on storage.');
         }
 

@@ -20,6 +20,7 @@ class KbCategoryFactory extends Factory
     public function definition(): array
     {
         $name = $this->faker->unique()->word();
+
         return [
             'user_id' => User::factory(),
             'name' => ucfirst($name),

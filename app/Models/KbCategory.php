@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Concerns\BelongsToUser;
+use Database\Factories\KbCategoryFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
@@ -10,9 +11,10 @@ use Illuminate\Support\Str;
 
 class KbCategory extends Model
 {
-    /** @use HasFactory<\Database\Factories\KbCategoryFactory> */
-    use HasFactory;
     use BelongsToUser;
+
+    /** @use HasFactory<KbCategoryFactory> */
+    use HasFactory;
 
     /**
      * The attributes that are mass assignable.

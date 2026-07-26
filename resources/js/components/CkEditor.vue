@@ -28,7 +28,7 @@ class ImageUploadAdapter {
                 const formData = new FormData();
                 formData.append('image', file);
 
-                fetch('/notes/upload-image', {
+                fetch('/app/notes/upload-image', {
                     method: 'POST',
                     body: formData,
                     headers: {

@@ -18,12 +18,12 @@ class CalendarEventController extends Controller
      */
     public function index(Request $request): Response
     {
-        $start = $request->input('start') 
-            ? Carbon::parse($request->input('start'))->startOfDay() 
+        $start = $request->input('start')
+            ? Carbon::parse($request->input('start'))->startOfDay()
             : now()->startOfMonth()->startOfDay();
 
-        $end = $request->input('end') 
-            ? Carbon::parse($request->input('end'))->endOfDay() 
+        $end = $request->input('end')
+            ? Carbon::parse($request->input('end'))->endOfDay()
             : now()->endOfMonth()->endOfDay();
 
         // 1. Get custom events and expand recurrences

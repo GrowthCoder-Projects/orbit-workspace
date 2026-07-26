@@ -21,6 +21,7 @@ class HabitStreakService
                 'streak_current' => 0,
                 'streak_longest' => 0,
             ]);
+
             return;
         }
 
@@ -50,7 +51,7 @@ class HabitStreakService
      */
     private function calculateDailyStreak(Collection $logs): array
     {
-        $logDates = $logs->pluck('completed_date')->map(fn($date) => $date->format('Y-m-d'))->toArray();
+        $logDates = $logs->pluck('completed_date')->map(fn ($date) => $date->format('Y-m-d'))->toArray();
         $logDatesSet = array_flip($logDates);
 
         $today = Carbon::today()->format('Y-m-d');
@@ -61,7 +62,7 @@ class HabitStreakService
         $checkDate = Carbon::today();
 
         // If today is not completed and yesterday is not completed, streak is 0
-        if (!isset($logDatesSet[$today]) && !isset($logDatesSet[$yesterday])) {
+        if (! isset($logDatesSet[$today]) && ! isset($logDatesSet[$yesterday])) {
             $currentStreak = 0;
         } else {
             // Start checking from the most recent completed date (today or yesterday)
@@ -75,10 +76,10 @@ class HabitStreakService
         // Longest Streak
         $longestStreak = 0;
         $tempStreak = 0;
-        
+
         // Sort dates ascending to count longest streak
-        $sortedDates = $logs->pluck('completed_date')->map(fn($date) => Carbon::parse($date))->sort()->values();
-        
+        $sortedDates = $logs->pluck('completed_date')->map(fn ($date) => Carbon::parse($date))->sort()->values();
+
         if ($sortedDates->isNotEmpty()) {
             $tempStreak = 1;
             $longestStreak = 1;
@@ -107,12 +108,13 @@ class HabitStreakService
             return [0, 0];
         }
 
-        $logDates = $logs->pluck('completed_date')->map(fn($date) => $date->format('Y-m-d'))->toArray();
+        $logDates = $logs->pluck('completed_date')->map(fn ($date) => $date->format('Y-m-d'))->toArray();
         $logDatesSet = array_flip($logDates);
 
         // Helper to check if a day of week is scheduled
         $isScheduled = function (Carbon $date) use ($scheduledDays) {
             $dayName = strtolower($date->format('D')); // mon, tue, etc.
+
             return in_array($dayName, $scheduledDays);
         };
 
@@ -121,20 +123,20 @@ class HabitStreakService
         $checkDate = Carbon::today();
 
         // Find the last scheduled date (including today)
-        while (!$isScheduled($checkDate)) {
+        while (! $isScheduled($checkDate)) {
             $checkDate->subDay();
         }
 
         // If the last scheduled date is TODAY, but not logged, we also check the previous scheduled day
         $lastScheduledDate = $checkDate->copy();
-        if ($lastScheduledDate->isToday() && !isset($logDatesSet[$lastScheduledDate->format('Y-m-d')])) {
+        if ($lastScheduledDate->isToday() && ! isset($logDatesSet[$lastScheduledDate->format('Y-m-d')])) {
             // Today is scheduled but not logged.
             // Check if there was any prior logging. We move to the previous scheduled day to see if streak is still alive.
             $prevScheduled = $lastScheduledDate->copy()->subDay();
-            while (!$isScheduled($prevScheduled)) {
+            while (! $isScheduled($prevScheduled)) {
                 $prevScheduled->subDay();
             }
-            if (!isset($logDatesSet[$prevScheduled->format('Y-m-d')])) {
+            if (! isset($logDatesSet[$prevScheduled->format('Y-m-d')])) {
                 // Previous scheduled day is also not logged, streak is broken
                 $currentStreak = 0;
             } else {
@@ -143,21 +145,21 @@ class HabitStreakService
                 while (isset($logDatesSet[$checkDate->format('Y-m-d')])) {
                     $currentStreak++;
                     $checkDate->subDay();
-                    while (!$isScheduled($checkDate)) {
+                    while (! $isScheduled($checkDate)) {
                         $checkDate->subDay();
                     }
                 }
             }
         } else {
             // Start checking from the last scheduled date (which is either today and logged, or yesterday or earlier and logged/unlogged)
-            if (!isset($logDatesSet[$lastScheduledDate->format('Y-m-d')])) {
+            if (! isset($logDatesSet[$lastScheduledDate->format('Y-m-d')])) {
                 $currentStreak = 0;
             } else {
                 $checkDate = $lastScheduledDate;
                 while (isset($logDatesSet[$checkDate->format('Y-m-d')])) {
                     $currentStreak++;
                     $checkDate->subDay();
-                    while (!$isScheduled($checkDate)) {
+                    while (! $isScheduled($checkDate)) {
                         $checkDate->subDay();
                     }
                 }
@@ -169,7 +171,7 @@ class HabitStreakService
         $tempStreak = 0;
 
         // Fetch all logs, sort ascending
-        $sortedLogs = $logs->pluck('completed_date')->map(fn($date) => Carbon::parse($date))->sort()->values();
+        $sortedLogs = $logs->pluck('completed_date')->map(fn ($date) => Carbon::parse($date))->sort()->values();
 
         if ($sortedLogs->isNotEmpty()) {
             $tempStreak = 0;
@@ -206,8 +208,8 @@ class HabitStreakService
 
         // Group completions by week key (Year-WeekNumber, e.g., '2026-29')
         // We use ISO week format 'o-W' (o is the ISO year, W is ISO week)
-        $completionsByWeek = $logs->groupBy(fn($log) => $log->completed_date->format('o-W'))
-            ->map(fn($weekLogs) => $weekLogs->count());
+        $completionsByWeek = $logs->groupBy(fn ($log) => $log->completed_date->format('o-W'))
+            ->map(fn ($weekLogs) => $weekLogs->count());
 
         $currentWeekKey = Carbon::today()->format('o-W');
         $prevWeekKey = Carbon::today()->subWeek()->format('o-W');
@@ -217,7 +219,7 @@ class HabitStreakService
 
         // Current Streak calculation
         $currentStreak = 0;
-        if (!$currentWeekCompleted && !$prevWeekCompleted) {
+        if (! $currentWeekCompleted && ! $prevWeekCompleted) {
             $currentStreak = 0;
         } else {
             // Start checking back week-by-week
@@ -240,8 +242,8 @@ class HabitStreakService
 
         if ($completionsByWeek->isNotEmpty()) {
             // Get all unique sorted week keys
-            $weeks = $logs->map(fn($log) => Carbon::parse($log->completed_date))
-                ->map(fn($date) => $date->startOfWeek())
+            $weeks = $logs->map(fn ($log) => Carbon::parse($log->completed_date))
+                ->map(fn ($date) => $date->startOfWeek())
                 ->unique()
                 ->sort()
                 ->values();

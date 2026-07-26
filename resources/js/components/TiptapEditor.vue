@@ -50,7 +50,7 @@ const uploadImageFile = async (file: File): Promise<string | null> => {
 
     try {
         emit('saving');
-        const response = await fetch('/notes/upload-image', {
+        const response = await fetch('/app/notes/upload-image', {
             method: 'POST',
             body: formData,
             headers: {

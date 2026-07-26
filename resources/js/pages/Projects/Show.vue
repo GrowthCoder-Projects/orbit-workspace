@@ -29,6 +29,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useConfirm } from '@/composables/useConfirm';
 import { index as projectsIndex, edit as projectEdit } from '@/routes/projects';
+import { index as tasksIndex } from '@/routes/tasks';
 
 const { confirm } = useConfirm();
 
@@ -864,7 +865,7 @@ function isOverdue(dateStr: string): boolean {
                             </div>
                         </div>
 
-                        <Link href="/tasks">
+                        <Link :href="tasksIndex().url">
                             <Button
                                 variant="outline"
                                 size="sm"

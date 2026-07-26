@@ -18,9 +18,7 @@ class HabitReminderNotification extends Notification implements ShouldQueue
     /**
      * Create a new notification instance.
      */
-    public function __construct(public Habit $habit)
-    {
-    }
+    public function __construct(public Habit $habit) {}
 
     /**
      * Get the notification's delivery channels.
@@ -69,9 +67,9 @@ class HabitReminderNotification extends Notification implements ShouldQueue
         }
 
         $text = "⏰ *PENGINGAT HABIT*\n\n"
-              . "💪 Jangan lupa untuk menyelesaikan habit hari ini:\n"
-              . "📌 *Nama*: {$this->habit->name}\n"
-              . "🔥 *Streak*: {$this->habit->streak_current} hari\n";
+              ."💪 Jangan lupa untuk menyelesaikan habit hari ini:\n"
+              ."📌 *Nama*: {$this->habit->name}\n"
+              ."🔥 *Streak*: {$this->habit->streak_current} hari\n";
 
         if ($this->habit->description) {
             $text .= "📝 *Deskripsi*: {$this->habit->description}\n";
@@ -84,7 +82,7 @@ class HabitReminderNotification extends Notification implements ShouldQueue
                 'parse_mode' => 'Markdown',
             ]);
         } catch (\Exception $e) {
-            Log::error("Failed to send Telegram habit reminder: " . $e->getMessage());
+            Log::error('Failed to send Telegram habit reminder: '.$e->getMessage());
         }
     }
 }

@@ -22,7 +22,7 @@ class ClientFactory extends Factory
             'company' => $this->faker->company(),
             'email' => $this->faker->safeEmail(),
             'phone' => $this->faker->phoneNumber(),
-            'tax_id' => 'TX-' . $this->faker->numerify('######-##'),
+            'tax_id' => 'TX-'.$this->faker->numerify('######-##'),
             'billing_address' => $this->faker->address(),
             'notes' => $this->faker->paragraph(),
         ];

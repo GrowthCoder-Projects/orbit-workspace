@@ -27,7 +27,7 @@ class FetchBookmarkMetadataJob implements ShouldQueue
     public function handle(): void
     {
         // Ensure bookmark still exists
-        if (!$this->bookmark->exists) {
+        if (! $this->bookmark->exists) {
             return;
         }
 
@@ -36,11 +36,12 @@ class FetchBookmarkMetadataJob implements ShouldQueue
         $url = $this->bookmark->url;
         $parsedUrl = parse_url($url);
 
-        if (!$parsedUrl || !isset($parsedUrl['host'])) {
+        if (! $parsedUrl || ! isset($parsedUrl['host'])) {
             $this->bookmark->update([
                 'title' => $url,
                 'status' => 'failed',
             ]);
+
             return;
         }
 
@@ -54,6 +55,7 @@ class FetchBookmarkMetadataJob implements ShouldQueue
                 'description' => 'Fetching blocked: Target resolves to a private or loopback IP address.',
                 'status' => 'failed',
             ]);
+
             return;
         }
 
@@ -63,20 +65,21 @@ class FetchBookmarkMetadataJob implements ShouldQueue
                 'User-Agent' => 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
             ])->timeout(10)->get($url);
 
-            if (!$response->successful()) {
+            if (! $response->successful()) {
                 $this->bookmark->update([
                     'title' => $host,
                     'status' => 'failed',
                 ]);
+
                 return;
             }
 
             $html = $response->body();
-            
+
             // Suppress DOM parsing errors
-            $dom = new \DOMDocument();
+            $dom = new \DOMDocument;
             libxml_use_internal_errors(true);
-            
+
             // Convert to HTML entities to prevent UTF-8 encoding issues in DOMDocument
             @$dom->loadHTML(mb_convert_encoding($html, 'HTML-ENTITIES', 'UTF-8'));
             libxml_clear_errors();
@@ -104,23 +107,23 @@ class FetchBookmarkMetadataJob implements ShouldQueue
                 ?: $this->getXpathValue($xpath, '//link[@rel="icon"]/@href');
 
             // Resolve relative URLs
-            $baseUrl = $parsedUrl['scheme'] . '://' . $host;
-            if ($previewImage && !Str::startsWith($previewImage, ['http://', 'https://'])) {
+            $baseUrl = $parsedUrl['scheme'].'://'.$host;
+            if ($previewImage && ! Str::startsWith($previewImage, ['http://', 'https://'])) {
                 $previewImage = $this->resolveRelativeUrl($baseUrl, $previewImage);
             }
-            if ($favicon && !Str::startsWith($favicon, ['http://', 'https://'])) {
+            if ($favicon && ! Str::startsWith($favicon, ['http://', 'https://'])) {
                 $favicon = $this->resolveRelativeUrl($baseUrl, $favicon);
-            } else if (!$favicon) {
+            } elseif (! $favicon) {
                 // Default fallback favicon
-                $favicon = $baseUrl . '/favicon.ico';
+                $favicon = $baseUrl.'/favicon.ico';
             }
 
             // Upgrade schemas to HTTPS to prevent Mixed Content warnings on secure connections
             if ($favicon && Str::startsWith($favicon, 'http://')) {
-                $favicon = 'https://' . Str::after($favicon, 'http://');
+                $favicon = 'https://'.Str::after($favicon, 'http://');
             }
             if ($previewImage && Str::startsWith($previewImage, 'http://')) {
-                $previewImage = 'https://' . Str::after($previewImage, 'http://');
+                $previewImage = 'https://'.Str::after($previewImage, 'http://');
             }
 
             $this->bookmark->update([
@@ -132,8 +135,8 @@ class FetchBookmarkMetadataJob implements ShouldQueue
             ]);
 
         } catch (\Exception $e) {
-            Log::error('Failed to fetch metadata for bookmark ' . $this->bookmark->id . ': ' . $e->getMessage());
-            
+            Log::error('Failed to fetch metadata for bookmark '.$this->bookmark->id.': '.$e->getMessage());
+
             $this->bookmark->update([
                 'title' => $host,
                 'status' => 'failed',
@@ -190,6 +193,7 @@ class FetchBookmarkMetadataJob implements ShouldQueue
         if ($nodes && $nodes->length > 0) {
             return $nodes->item(0)->nodeValue;
         }
+
         return null;
     }
 
@@ -199,13 +203,13 @@ class FetchBookmarkMetadataJob implements ShouldQueue
     private function resolveRelativeUrl(string $baseUrl, string $relativeUrl): string
     {
         if (Str::startsWith($relativeUrl, '//')) {
-            return 'https:' . $relativeUrl;
+            return 'https:'.$relativeUrl;
         }
 
         if (Str::startsWith($relativeUrl, '/')) {
-            return rtrim($baseUrl, '/') . $relativeUrl;
+            return rtrim($baseUrl, '/').$relativeUrl;
         }
 
-        return rtrim($baseUrl, '/') . '/' . $relativeUrl;
+        return rtrim($baseUrl, '/').'/'.$relativeUrl;
     }
 }

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\FinanceGoal;
 use App\Models\FinanceSaving;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -19,7 +20,7 @@ class FinanceSavingController extends Controller
 
         return Inertia::render('Finance/Savings', [
             'savings' => $savings,
-            'goals' => \App\Models\FinanceGoal::orderBy('deadline')->get(),
+            'goals' => FinanceGoal::orderBy('deadline')->get(),
         ]);
     }
 

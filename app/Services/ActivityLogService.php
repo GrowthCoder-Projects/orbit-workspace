@@ -11,7 +11,7 @@ class ActivityLogService
     /**
      * Log a model CRUD activity.
      *
-     * @param array<array{field: string, old: mixed, new: mixed}> $properties
+     * @param  array<array{field: string, old: mixed, new: mixed}>  $properties
      */
     public static function log(
         string $action,
@@ -55,7 +55,7 @@ class ActivityLogService
     /**
      * Log a model update event with a diff of changed fields.
      *
-     * @param list<string> $watch Fields to include in diff (empty = all dirty fields)
+     * @param  list<string>  $watch  Fields to include in diff (empty = all dirty fields)
      */
     public static function updated(Model $subject, string $name, array $watch = []): ActivityLog
     {
@@ -117,7 +117,7 @@ class ActivityLogService
     {
         return self::log(
             action: 'budget_alert',
-            description: "Budget \"{$categoryName}\" terlampaui: Rp ".number_format($spent, 0, ',', '.')." / Rp ".number_format($budget, 0, ',', '.'),
+            description: "Budget \"{$categoryName}\" terlampaui: Rp ".number_format($spent, 0, ',', '.').' / Rp '.number_format($budget, 0, ',', '.'),
             subject: $subject,
             properties: [['field' => 'spent', 'old' => $budget, 'new' => $spent]],
         );

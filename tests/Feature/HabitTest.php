@@ -202,7 +202,7 @@ test('daily habit calculates current and longest streaks correctly', function ()
         'frequency_type' => 'daily',
     ]);
 
-    $streakService = new HabitStreakService();
+    $streakService = new HabitStreakService;
 
     // Log for today, yesterday, and 2 days ago (streak = 3)
     HabitLog::create(['habit_id' => $habit->id, 'completed_date' => Carbon::today()->format('Y-m-d')]);
@@ -224,7 +224,7 @@ test('daily habit calculates current and longest streaks correctly', function ()
     HabitLog::where('habit_id', $habit->id)->whereIn('completed_date', [
         Carbon::today()->format('Y-m-d'),
         Carbon::yesterday()->format('Y-m-d'),
-        Carbon::today()->subDays(2)->format('Y-m-d')
+        Carbon::today()->subDays(2)->format('Y-m-d'),
     ])->delete();
 
     $streakService->recalculate($habit);
@@ -244,7 +244,7 @@ test('custom days habit calculates current streak correctly', function () {
         'frequency_days' => ['mon', 'wed', 'fri'],
     ]);
 
-    $streakService = new HabitStreakService();
+    $streakService = new HabitStreakService;
 
     // Mock logging schedule: We will insert completions for specific dates representing Mon, Wed, Fri
     // Let's find dates corresponding to a Monday, Wednesday, Friday

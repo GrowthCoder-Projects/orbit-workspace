@@ -3,41 +3,52 @@
 use App\Http\Controllers\ActivityController;
 use App\Http\Controllers\BookmarkCategoryController;
 use App\Http\Controllers\BookmarkController;
+use App\Http\Controllers\CalendarEventController;
 use App\Http\Controllers\ClientController;
+use App\Http\Controllers\DailyWelcomeController;
+use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\DocsController;
+use App\Http\Controllers\DocumentController;
+use App\Http\Controllers\DocumentFolderController;
+use App\Http\Controllers\FinanceAccountController;
+use App\Http\Controllers\FinanceAssetController;
+use App\Http\Controllers\FinanceBillController;
+use App\Http\Controllers\FinanceBudgetController;
+use App\Http\Controllers\FinanceCategoryController;
+use App\Http\Controllers\FinanceDashboardController;
+use App\Http\Controllers\FinanceGoalController;
+use App\Http\Controllers\FinanceInvestmentController;
+use App\Http\Controllers\FinanceLiabilityController;
+use App\Http\Controllers\FinanceReportController;
+use App\Http\Controllers\FinanceSavingController;
+use App\Http\Controllers\FinanceTransactionController;
 use App\Http\Controllers\FolderController;
+use App\Http\Controllers\HabitController;
+use App\Http\Controllers\InvoiceController;
+use App\Http\Controllers\InvoicePdfController;
 use App\Http\Controllers\KbArticleController;
 use App\Http\Controllers\KbCategoryController;
+use App\Http\Controllers\MediaController;
 use App\Http\Controllers\NoteController;
 use App\Http\Controllers\ProjectController;
 use App\Http\Controllers\ProjectMilestoneController;
 use App\Http\Controllers\TaskChecklistController;
 use App\Http\Controllers\TaskController;
-use App\Http\Controllers\CalendarEventController;
-use App\Http\Controllers\FinanceDashboardController;
-use App\Http\Controllers\FinanceAccountController;
-use App\Http\Controllers\FinanceTransactionController;
-use App\Http\Controllers\FinanceCategoryController;
-use App\Http\Controllers\FinanceBudgetController;
-use App\Http\Controllers\FinanceSavingController;
-use App\Http\Controllers\FinanceGoalController;
-use App\Http\Controllers\FinanceInvestmentController;
-use App\Http\Controllers\FinanceAssetController;
-use App\Http\Controllers\FinanceLiabilityController;
-use App\Http\Controllers\FinanceBillController;
-use App\Http\Controllers\FinanceReportController;
-use App\Http\Controllers\InvoiceController;
-use App\Http\Controllers\InvoicePdfController;
-use App\Http\Controllers\DocumentController;
-use App\Http\Controllers\DocumentFolderController;
-use App\Http\Controllers\DailyWelcomeController;
-use App\Http\Controllers\DashboardController;
-use App\Http\Controllers\HabitController;
+use App\Http\Controllers\TaskTimeLogController;
 use Illuminate\Support\Facades\Route;
 
 Route::redirect('/', '/app/dashboard')->name('home');
+Route::get('docs', [DocsController::class, 'index'])->name('docs.index');
+
+// Custom Media / Image routing
+Route::middleware(['auth', 'single_user'])->group(function () {
+    Route::get('media/image/{path}', [MediaController::class, 'show'])->where('path', '.*')->name('media.image');
+    Route::get('media/{path}', [MediaController::class, 'show'])->where('path', '.*')->name('media.show');
+});
 
 Route::middleware(['auth', 'verified', 'single_user'])->prefix('app')->group(function () {
     Route::get('dashboard', [DashboardController::class, 'index'])->name('dashboard');
+    Route::get('docs', [DocsController::class, 'index'])->name('app.docs.index');
 
     // Projects Module
     Route::middleware(['module.enabled:projects'])->group(function () {
@@ -62,6 +73,9 @@ Route::middleware(['auth', 'verified', 'single_user'])->prefix('app')->group(fun
         Route::post('tasks/{task}/checklists', [TaskChecklistController::class, 'store'])->name('tasks.checklists.store');
         Route::patch('tasks/checklists/{checklist}', [TaskChecklistController::class, 'update'])->name('tasks.checklists.update');
         Route::delete('tasks/checklists/{checklist}', [TaskChecklistController::class, 'destroy'])->name('tasks.checklists.destroy');
+
+        Route::post('tasks/{task}/time-logs', [TaskTimeLogController::class, 'store'])->name('tasks.time-logs.store');
+        Route::delete('time-logs/{timeLog}', [TaskTimeLogController::class, 'destroy'])->name('tasks.time-logs.destroy');
     });
 
     // Notes Module
@@ -162,5 +176,3 @@ Route::middleware(['auth', 'verified', 'single_user'])->prefix('app')->group(fun
 });
 
 require __DIR__.'/settings.php';
-
-

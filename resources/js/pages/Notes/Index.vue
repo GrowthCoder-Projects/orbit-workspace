@@ -179,7 +179,7 @@ const filteredNotes = computed(() => {
 const selectNote = (noteId: number) => {
     selectedNoteId.value = noteId;
     router.replace({
-        url: `/notes?id=${noteId}`,
+        url: `/app/notes?id=${noteId}`,
         preserveState: true,
         preserveScroll: true,
     });
@@ -195,7 +195,7 @@ const createNote = () => {
         typeof activeFilter.value === 'number' ? activeFilter.value : null;
 
     router.post(
-        '/notes',
+        '/app/notes',
         {
             folder_id: folderId,
             title: 'Untitled Note',
@@ -245,6 +245,7 @@ const toggleFavorite = async (note: NoteType) => {
             method: 'PATCH',
             headers: {
                 'Content-Type': 'application/json',
+                'Accept': 'application/json',
                 'X-CSRF-TOKEN':
                     document
                         .querySelector('meta[name="csrf-token"]')
@@ -272,6 +273,7 @@ const toggleArchive = async (note: NoteType) => {
             method: 'PATCH',
             headers: {
                 'Content-Type': 'application/json',
+                'Accept': 'application/json',
                 'X-CSRF-TOKEN':
                     document
                         .querySelector('meta[name="csrf-token"]')
@@ -307,6 +309,7 @@ const updateEditorType = async (type: 'tiptap' | 'ckeditor') => {
             method: 'PATCH',
             headers: {
                 'Content-Type': 'application/json',
+                'Accept': 'application/json',
                 'X-CSRF-TOKEN':
                     document
                         .querySelector('meta[name="csrf-token"]')
@@ -345,6 +348,7 @@ clearTimeout(saveTimeout);
                 method: 'PATCH',
                 headers: {
                     'Content-Type': 'application/json',
+                    'Accept': 'application/json',
                     'X-CSRF-TOKEN':
                         document
                             .querySelector('meta[name="csrf-token"]')

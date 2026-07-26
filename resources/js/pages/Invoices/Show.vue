@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Head, Link, useForm, router, setLayoutProps } from '@inertiajs/vue3';
+import { Head, Link, useForm, usePage, router, setLayoutProps } from '@inertiajs/vue3';
 import {
     ArrowLeft,
     Download,
@@ -13,7 +13,7 @@ import {
     Building2,
     FileText,
 } from '@lucide/vue';
-import { ref, computed } from 'vue';
+import { ref, computed, watch } from 'vue';
 import { toast } from 'vue-sonner';
 import { Button } from '@/components/ui/button';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
@@ -35,6 +35,7 @@ import {
 } from '@/components/ui/select';
 import { useConfirm } from '@/composables/useConfirm';
 import {
+    index as invoicesIndex,
     destroy as destroyInvoice,
     pay as payInvoice,
     edit as editInvoice,
@@ -44,6 +45,28 @@ const props = defineProps<{
     invoice: any;
     accounts: any[];
 }>();
+
+const page = usePage();
+const defaultAppLogo = computed(
+    () => (page.props.settings as any)?.app_logo || '/storage/logo/logo-orbit.png',
+);
+const currentLogoUrl = ref<string | null>(null);
+
+watch(
+    () => props.invoice?.logo_path,
+    (newPath) => {
+        if (newPath) {
+            currentLogoUrl.value = `/media/image/${newPath}`;
+        } else {
+            currentLogoUrl.value = defaultAppLogo.value;
+        }
+    },
+    { immediate: true },
+);
+
+const handleInvoiceLogoError = () => {
+    currentLogoUrl.value = defaultAppLogo.value;
+};
 
 setLayoutProps({
     breadcrumbs: [
@@ -167,7 +190,7 @@ const getSpacingItemPaddingClass = (spacing: string) => {
         <!-- Actions Header Bar -->
         <div class="flex flex-col justify-between gap-4 border-b border-sidebar-border/60 pb-5 sm:flex-row sm:items-center">
             <div class="flex items-center gap-3">
-                <Link href="/invoices">
+                <Link :href="invoicesIndex().url">
                     <Button variant="ghost" size="icon" class="size-9">
                         <ArrowLeft class="size-4" />
                     </Button>
@@ -347,15 +370,16 @@ const getSpacingItemPaddingClass = (spacing: string) => {
                         <!-- Template 1: Modern Header -->
                         <div v-if="invoice.template_name === 'modern'" class="flex justify-between items-start">
                             <div>
-                                <template v-if="invoice.logo_path">
+                                <div v-if="currentLogoUrl">
                                     <img
-                                        :src="`/storage/${invoice.logo_path}`"
+                                        :src="currentLogoUrl"
+                                        @error="handleInvoiceLogoError"
                                         class="max-h-12 max-w-[180px] object-contain mb-1"
                                     />
                                     <div v-if="invoice.brand_name" class="text-xs font-bold text-zinc-600 mt-1">
                                         {{ invoice.brand_name }}
                                     </div>
-                                </template>
+                                </div>
                                 <div v-else class="text-lg font-bold text-zinc-700 tracking-tight">
                                     {{ invoice.brand_name || invoice.user?.name || 'WORKSPACE' }}
                                 </div>
@@ -517,7 +541,7 @@ const getSpacingItemPaddingClass = (spacing: string) => {
                                 <div class="font-bold text-zinc-700 mb-1">Metode Pembayaran / Rincian Rekening:</div>
                                 <div class="p-3 bg-zinc-50 rounded border border-zinc-100/60 max-w-sm flex items-start gap-3">
                                     <div v-if="invoice.finance_account.logo_path" class="size-10 rounded border border-zinc-200 bg-white flex items-center justify-center p-1 shrink-0 shadow-xs">
-                                        <img :src="`/storage/${invoice.finance_account.logo_path}`" class="size-full object-contain" />
+                                        <img :src="`/media/image/${invoice.finance_account.logo_path}`" class="size-full object-contain" />
                                     </div>
                                     <div class="min-w-0 flex-1 text-xs space-y-0.5 text-zinc-600">
                                         <div class="font-bold text-zinc-800 text-[11px]">{{ invoice.finance_account.name }} <span class="text-[9px] text-zinc-400 font-normal uppercase">({{ invoice.finance_account.type }})</span></div>

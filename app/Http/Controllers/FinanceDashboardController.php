@@ -30,7 +30,7 @@ class FinanceDashboardController extends Controller
 
         foreach ($accounts as $account) {
             $currency = $account->currency;
-            if (!isset($netWorthBreakdown[$currency])) {
+            if (! isset($netWorthBreakdown[$currency])) {
                 $netWorthBreakdown[$currency] = 0;
             }
             $netWorthBreakdown[$currency] += $account->balance;
@@ -154,8 +154,8 @@ class FinanceDashboardController extends Controller
                     'data' => $expenseData,
                     'backgroundColor' => '#ef4444',
                     'borderColor' => '#ef4444',
-                ]
-            ]
+                ],
+            ],
         ];
     }
 }

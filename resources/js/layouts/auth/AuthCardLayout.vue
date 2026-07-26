@@ -11,6 +11,7 @@ import {
     CardTitle,
 } from '@/components/ui/card';
 import { useAppearance } from '@/composables/useAppearance';
+import AppLogo from '@/components/AppLogo.vue';
 import { home } from '@/routes';
 
 defineProps<{
@@ -64,18 +65,7 @@ const toggleAppearance = () => {
                                 :href="home()"
                                 class="inline-flex items-center justify-center"
                             >
-                                <!-- Light Mode Logo -->
-                                <img
-                                    src="/logo/logo-gc-light.png"
-                                    alt="growthcoder.id Logo"
-                                    class="block h-10 w-auto object-contain dark:hidden"
-                                />
-                                <!-- Dark Mode Logo -->
-                                <img
-                                    src="/logo/logo-gc-dark.png"
-                                    alt="growthcoder.id Logo"
-                                    class="hidden h-10 w-auto object-contain dark:block"
-                                />
+                                <AppLogo size="xl" />
                             </Link>
                         </div>
                         <CardTitle

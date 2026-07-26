@@ -1,9 +1,11 @@
 <?php
 
+use App\Http\Controllers\Settings\ApiTokenController;
 use App\Http\Controllers\Settings\BackupController;
 use App\Http\Controllers\Settings\EditorSettingController;
 use App\Http\Controllers\Settings\FeatureController;
 use App\Http\Controllers\Settings\IntegrationController;
+use App\Http\Controllers\Settings\LogoController;
 use App\Http\Controllers\Settings\ProfileController;
 use App\Http\Controllers\Settings\SecurityController;
 use Illuminate\Auth\Middleware\RequirePassword;
@@ -29,16 +31,22 @@ Route::middleware(['auth', 'verified', 'single_user'])->prefix('app')->group(fun
 
     Route::inertia('settings/appearance', 'settings/Appearance')->name('appearance.edit');
     Route::patch('settings/editor', [EditorSettingController::class, 'update'])->name('settings.editor.update');
+    Route::post('settings/logo', [LogoController::class, 'update'])->name('settings.logo.update');
+    Route::delete('settings/logo', [LogoController::class, 'destroy'])->name('settings.logo.destroy');
 
     // Features
     Route::get('settings/features', [FeatureController::class, 'edit'])->name('settings.features.edit');
     Route::patch('settings/features', [FeatureController::class, 'update'])->name('settings.features.update');
 
-
     // Integrations
     Route::get('settings/integrations', [IntegrationController::class, 'edit'])->name('integrations.edit');
     Route::patch('settings/integrations/telegram', [IntegrationController::class, 'updateTelegram'])->name('integrations.telegram.update');
     Route::post('settings/integrations/telegram/test', [IntegrationController::class, 'testTelegram'])->name('integrations.telegram.test');
+
+    // API Tokens
+    Route::get('settings/api-tokens', [ApiTokenController::class, 'index'])->name('api-tokens.index');
+    Route::post('settings/api-tokens', [ApiTokenController::class, 'store'])->name('api-tokens.store');
+    Route::delete('settings/api-tokens/{token}', [ApiTokenController::class, 'destroy'])->name('api-tokens.destroy');
 
     // Backups
     Route::get('settings/backups', [BackupController::class, 'edit'])->name('backups.edit');

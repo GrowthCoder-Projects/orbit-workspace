@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Project;
 use App\Models\Task;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -19,7 +20,7 @@ class TaskController extends Controller
             'tasks' => Task::with(['checklists', 'project', 'projectMilestone'])
                 ->latest()
                 ->get(),
-            'projects' => \App\Models\Project::with('milestones')->get(),
+            'projects' => Project::with('milestones')->get(),
         ]);
     }
 

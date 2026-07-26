@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { Link } from '@inertiajs/vue3';
-import { User, Shield, Palette, Bot, Database, ToggleLeft } from '@lucide/vue';
+import { User, Shield, Palette, Bot, Database, ToggleLeft, KeyRound, BookOpen } from '@lucide/vue';
 import Heading from '@/components/Heading.vue';
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
@@ -36,6 +36,11 @@ const sidebarNavItems: NavItem[] = [
         title: 'Integrations',
         href: '/app/settings/integrations',
         icon: Bot,
+    },
+    {
+        title: 'API Tokens',
+        href: '/app/settings/api-tokens',
+        icon: KeyRound,
     },
     {
         title: 'Backups',

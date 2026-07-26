@@ -6,6 +6,7 @@ use Database\Factories\ProjectMilestoneFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class ProjectMilestone extends Model
 {
@@ -70,9 +71,9 @@ class ProjectMilestone extends Model
     /**
      * Get the tasks for the milestone.
      *
-     * @return \Illuminate\Database\Eloquent\Relations\HasMany<Task, $this>
+     * @return HasMany<Task, $this>
      */
-    public function tasks(): \Illuminate\Database\Eloquent\Relations\HasMany
+    public function tasks(): HasMany
     {
         return $this->hasMany(Task::class, 'project_milestone_id');
     }

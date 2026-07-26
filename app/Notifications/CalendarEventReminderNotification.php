@@ -18,9 +18,7 @@ class CalendarEventReminderNotification extends Notification implements ShouldQu
     /**
      * Create a new notification instance.
      */
-    public function __construct(public CalendarEvent $event)
-    {
-    }
+    public function __construct(public CalendarEvent $event) {}
 
     /**
      * Get the notification's delivery channels.
@@ -74,9 +72,9 @@ class CalendarEventReminderNotification extends Notification implements ShouldQu
         $date = $this->event->start_at->format('d-m-Y');
 
         $text = "🔔 *PENGINGAT JADWAL*\n\n"
-              . "📌 *Judul*: {$this->event->title}\n"
-              . "📅 *Tanggal*: {$date}\n"
-              . "⏰ *Waktu*: {$time}\n";
+              ."📌 *Judul*: {$this->event->title}\n"
+              ."📅 *Tanggal*: {$date}\n"
+              ."⏰ *Waktu*: {$time}\n";
 
         if ($this->event->description) {
             $text .= "📝 *Deskripsi*: {$this->event->description}\n";
@@ -89,7 +87,7 @@ class CalendarEventReminderNotification extends Notification implements ShouldQu
                 'parse_mode' => 'Markdown',
             ]);
         } catch (\Exception $e) {
-            Log::error("Failed to send Telegram calendar reminder: " . $e->getMessage());
+            Log::error('Failed to send Telegram calendar reminder: '.$e->getMessage());
         }
     }
 }

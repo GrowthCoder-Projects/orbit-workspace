@@ -5,6 +5,7 @@ use App\Models\ProjectMilestone;
 use App\Models\Task;
 use App\Models\User;
 use App\Notifications\CalendarEventReminderNotification;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\Notification;
 
 test('guest cannot view calendar', function () {
@@ -124,8 +125,8 @@ test('recurring events generate correct dynamic occurrences within range', funct
     ]);
 
     // Query July 2026 range
-    $start = \Carbon\Carbon::parse('2026-07-01');
-    $end = \Carbon\Carbon::parse('2026-07-31');
+    $start = Carbon::parse('2026-07-01');
+    $end = Carbon::parse('2026-07-31');
 
     $instances = $event->getInstancesInRange($start, $end);
 
